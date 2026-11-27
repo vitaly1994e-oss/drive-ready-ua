@@ -1,13 +1,7 @@
 name: Оновлення маршрутів МВС
+# Доступ ГСЦ МВС із GitHub Actions повертає 403: залишено лише ручний запуск.
 on:
   workflow_dispatch:
-  push:
-    branches: [full-routes-learning-2026-11-27]
-    paths:
-      - scripts/sync_routes.py
-      - .github/workflows/routes-sync.yml
-  schedule:
-    - cron: '20 2 * * 1'
 permissions:
   contents: write
 jobs:
