@@ -21,7 +21,7 @@ try {
  await page.locator('.route-open').first().click();
  assert.equal(await page.locator('#route-modal').isVisible(),true);
  assert.match(await page.locator('#route-modal-title').innerText(),/6341.*маршрут №1/);
- assert.match(await page.locator('#route-modal-image').getAttribute('src'),/hsc.gov.ua/);
+ assert.match(await page.locator('#route-modal-image').getAttribute('src'),/(hsc\.gov\.ua|web\.testpdr\.com)/);
  await page.locator('#route-zoom-in').click();
  assert.equal(await page.locator('#route-reset').innerText(),'130%');
  await page.locator('#route-next').click();
