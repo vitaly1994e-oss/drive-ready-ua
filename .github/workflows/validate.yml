@@ -1,0 +1,16 @@
+name: Перевірка сайту
+on:
+  push:
+    branches: [main, upgrade-2026-11-27]
+  pull_request:
+    branches: [main]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Перевірити сторінки та JavaScript
+        run: python3 tests/validate.py
