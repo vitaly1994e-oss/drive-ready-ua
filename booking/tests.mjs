@@ -91,3 +91,12 @@ test('Distinct Ukrainian educational visual identity and kinetic booking design 
  const bookingStyle=get('public/kinetic-studio.css');
  assert.ok(bookingStyle.includes('#ff6e49')&&bookingStyle.includes('html[data-theme=dark]'));
 });
+
+test('Booking is crawlable publicly but private schedules stay out of search',()=>{
+ const robots=get('public/robots.txt'),sitemap=get('public/sitemap.xml'),publicPage=get('public/index.html');
+ for(const x of ['User-agent: *','Sitemap: https://drive-time-booking-ov62.onrender.com/sitemap.xml'])assert.ok(robots.includes(x),x);
+ assert.ok(sitemap.includes('<loc>https://drive-time-booking-ov62.onrender.com/</loc>'));
+ assert.ok(publicPage.includes('rel="canonical"'));
+ assert.ok(!sitemap.includes('manage.html')&&!sitemap.includes('admin.html'));
+ for(const page of ['public/manage.html','public/admin.html'])assert.ok(get(page).includes('noindex,nofollow'),page);
+});
