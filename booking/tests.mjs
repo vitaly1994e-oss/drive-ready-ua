@@ -11,7 +11,7 @@ test('Public booking UX has real server booking and confirmation, not localStora
 });
 test('Admin access is enforced by server API and server-side database',()=>{
  const src=get('server.js');
- assert.match(src,/cookieAuth/);assert.match(src,/const admin=/);assert.match(src,/pg\.Pool/);
+ assert.match(src,/cookieAuth/);assert.match(src,/function admin\\(/);assert.match(src,/pg\.Pool/);
  assert.match(src,/pg_advisory_xact_lock/);assert.match(src,/uq_active_appointment/);
  assert.match(src,/api\/admin\/login/);assert.match(src,/api\/admin\/weekly/);
  assert.match(src,/api\/admin\/override/);assert.match(src,/api\/admin\/block/);
