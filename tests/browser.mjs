@@ -7,7 +7,7 @@ const page=await context.newPage();
 const exceptions=[];
 page.on('pageerror',e=>exceptions.push(String(e)));
 try {
- const routes=['/','/routes.html','/quiz.html','/practice.html','/exam-checklist.html','/profile.html','/ads.html','/privacy.html','/terms.html','/404.html'];
+ const routes=['/','/routes.html','/quiz.html','/practice.html','/exam-checklist.html','/profile.html','/ads.html','/privacy.html','/terms.html','/coach.html','/intersections.html','/instructor.html','/404.html'];
  for(const route of routes){const response=await page.goto(root+route);assert.equal(response.status(),200,route);assert.equal(await page.locator('html').getAttribute('lang'),'uk',route);assert.ok(await page.locator('h1').count()>0,route);assert.ok(await page.locator('#site-header .brand').count()>0,route);}
  await page.goto(root+'/');
  await page.locator('#theme-toggle').click();
@@ -17,6 +17,7 @@ try {
  await page.goto(root+'/routes.html');
  await page.locator('#search').fill('6341');
  assert.equal(await page.locator('.route-card').count(),1);
+ assert.equal(await page.locator('.route-open').count(),15);
  await page.locator('.route-open').first().click();
  assert.equal(await page.locator('#route-modal').isVisible(),true);
  assert.match(await page.locator('#route-modal-title').innerText(),/6341.*маршрут №1/);
@@ -31,6 +32,10 @@ try {
  await page.locator('.route-card button').click();
  assert.match(await page.locator('#detail').innerText(),/8 вересня 2026/);
  assert.equal(await page.locator('#detail .route-open').count(),0);
+ await page.locator('#search').fill('7141');
+ assert.equal(await page.locator('.route-open').count(),2);
+ await page.locator('#search').fill('0541');
+ assert.equal(await page.locator('.route-open').count(),5);
  await page.goto(root+'/quiz.html');
  await page.locator('#begin').click();
  assert.ok(await page.locator('#answers .answer').count()>0);
@@ -55,9 +60,34 @@ try {
  await page.goto(root+'/profile.html');
  assert.match(await page.locator('#total').innerText(),/2/);
  await page.locator('#export').click();
+ await page.goto(root+'/coach.html');
+ await page.locator('#speech-choice').selectOption('no');
+ await page.locator('#start-exam').click();
+ assert.match(await page.locator('#exam-progress').innerText(),/1 із 7/);
+ await page.locator('#exam-options .answer').first().click();
+ await page.locator('#exam-next').click();
+ assert.match(await page.locator('#exam-progress').innerText(),/2 із 7/);
+ await page.locator('#exam-stop').click();
+ assert.match(await page.locator('#last-exam').innerText(),/Помилок/);
+ await page.locator('#prep-days input').first().check();
+ await page.reload();
+ assert.equal(await page.locator('#prep-days input').first().isChecked(),true);
+ await page.goto(root+'/intersections.html');
+ await page.locator('#intersection-topic').selectOption('tram');
+ assert.match(await page.locator('#intersection-question').innerText(),/трамвай/);
+ await page.locator('#intersection-options button').first().click();
+ assert.match(await page.locator('#intersection-feedback').innerText(),/правил/);
+ await page.goto(root+'/instructor.html');
+ await page.locator('#student').fill('Навчальний курсант');
+ await page.locator('#lesson-note').fill('Повторити зупинку');
+ await page.locator('#lesson-consent').check();
+ await page.locator('#lesson-form button[type=submit]').click();
+ assert.match(await page.locator('#lessons-count').innerText(),/1/);
+ await page.reload();
+ assert.match(await page.locator('#lessons-list').innerText(),/Повторити зупинку/);
  const mobile=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
  const mp=await mobile.newPage();
- for(const route of ['/', '/routes.html','/quiz.html','/practice.html','/profile.html']){
+ for(const route of ['/', '/routes.html','/quiz.html','/practice.html','/profile.html','/coach.html','/intersections.html','/instructor.html']){
   await mp.goto(root+route);
   assert.equal(await mp.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1),true,'Horizontal overflow '+route);
   await mp.locator('#menu-toggle').click();
@@ -65,5 +95,5 @@ try {
  }
  await mobile.close();
  assert.deepEqual(exceptions,[]);
- console.log('PASS: 10 сторінок, навігація, маршрути, теорія, практика, чекліст, профіль, мобільні екрани, браузерні помилки');
+ console.log('PASS: 13 сторінок, навігація, маршрути, теорія, практика, чекліст, профіль, мобільні екрани, браузерні помилки');
 }finally{await browser.close()}
