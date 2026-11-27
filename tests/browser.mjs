@@ -1,0 +1,61 @@
+import { chromium } from 'playwright';
+import assert from 'node:assert/strict';
+const root='http://127.0.0.1:8765';
+const browser=await chromium.launch({headless:true});
+const context=await browser.newContext({viewport:{width:1280,height:800},acceptDownloads:true});
+const page=await context.newPage();
+const exceptions=[];
+page.on('pageerror',e=>exceptions.push(String(e)));
+try {
+ const routes=['/','/routes.html','/quiz.html','/practice.html','/exam-checklist.html','/profile.html','/ads.html','/privacy.html','/terms.html','/404.html'];
+ for(const route of routes){const response=await page.goto(root+route);assert.equal(response.status(),200,route);assert.equal(await page.locator('html').getAttribute('lang'),'uk',route);assert.ok(await page.locator('h1').count()>0,route);assert.ok(await page.locator('#site-header .brand').count()>0,route);}
+ await page.goto(root+'/');
+ await page.locator('#theme-toggle').click();
+ assert.equal(await page.locator('html').getAttribute('data-theme'),'light');
+ await page.reload();
+ assert.equal(await page.locator('html').getAttribute('data-theme'),'light');
+ await page.goto(root+'/routes.html');
+ await page.locator('#search').fill('6341');
+ assert.equal(await page.locator('.route-card').count(),1);
+ await page.locator('.route-card button').click();
+ assert.ok(await page.locator('#detail .route-image').count()>=1);
+ await page.locator('#search').fill('8041');
+ await page.locator('.route-card button').click();
+ assert.match(await page.locator('#detail').innerText(),/8 вересня 2026/);
+ assert.equal(await page.locator('#detail .route-image').count(),0);
+ await page.goto(root+'/quiz.html');
+ await page.locator('#begin').click();
+ assert.ok(await page.locator('#answers .answer').count()>0);
+ await page.locator('#answers .answer').first().click();
+ await page.locator('#next').click();
+ await page.locator('#stop').click();
+ assert.match(await page.locator('#stats').innerText(),/1/);
+ await page.locator('#mode').selectOption('exam');
+ await page.locator('#begin').click();
+ assert.match(await page.locator('#counter').innerText(),/1 з 20/);
+ await page.locator('#stop').click();
+ await page.goto(root+'/practice.html');
+ await page.locator('#voice-on').uncheck();
+ await page.locator('#answers .answer').first().click();
+ await page.locator('#next').click();
+ assert.match(await page.locator('#counter').innerText(),/2 із 10/);
+ await page.goto(root+'/exam-checklist.html');
+ await page.locator('#items input[type=checkbox]').first().check();
+ assert.match(await page.locator('#score').innerText(),/1 із 14/);
+ await page.reload();
+ assert.equal(await page.locator('#items input[type=checkbox]').first().isChecked(),true);
+ await page.goto(root+'/profile.html');
+ assert.match(await page.locator('#total').innerText(),/2/);
+ await page.locator('#export').click();
+ const mobile=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+ const mp=await mobile.newPage();
+ for(const route of ['/', '/routes.html','/quiz.html','/practice.html','/profile.html']){
+  await mp.goto(root+route);
+  assert.equal(await mp.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1),true,'Horizontal overflow '+route);
+  await mp.locator('#menu-toggle').click();
+  assert.equal(await mp.locator('#nav-links').evaluate(e=>e.classList.contains('open')),true);
+ }
+ await mobile.close();
+ assert.deepEqual(exceptions,[]);
+ console.log('PASS: 10 сторінок, навігація, маршрути, теорія, практика, чекліст, профіль, мобільні екрани, браузерні помилки');
+}finally{await browser.close()}

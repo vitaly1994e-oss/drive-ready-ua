@@ -14,7 +14,7 @@ class Inspect(HTMLParser):
             u=attrs.get("href") or attrs.get("src")
             if u and not u.startswith(("https://","http://","#","mailto:","data:")):
                 self.links.append(u.split("?")[0].split("#")[0])
-        if tag=="script" and not attrs.get("src"):self.inline=True;self.current=[]
+        if tag=="script" and not attrs.get("src") and attrs.get("type") not in ("application/ld+json","application/json"):self.inline=True;self.current=[]
     def handle_data(self,data):
         if self.inline:self.current.append(data)
     def handle_endtag(self,tag):
