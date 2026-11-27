@@ -1,0 +1,80 @@
+/* DRIVE READY UA / UKRAINIAN MOTION SYSTEM — 2026
+   Educational identity: cobalt, sun-yellow, map grid, editorial type.
+   Visual effects are decorative; content, tests and routes remain usable. */
+:root{
+ --bg:#071e49;--panel:#0d2b62;--panel2:#123972;--ink:#f5f8ff;
+ --muted:#b6cae7;--accent:#ffdb42;--line:#31538b;
+ --shadow:0 20px 65px #03112b65;color-scheme:dark;
+}
+html[data-theme=light]{
+ --bg:#f3f7ff;--panel:#fff;--panel2:#e8f0ff;--ink:#112a51;
+ --muted:#496384;--accent:#f6c900;--line:#cbd9f2;
+ --shadow:0 20px 55px #1a4f9f1e;color-scheme:light
+}
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);
+ background-image:radial-gradient(ellipse at 85% 8%,#235ac45c,transparent 32%),radial-gradient(ellipse at 2% 34%,#0b83ac24,transparent 36%);background-attachment:fixed}
+html[data-theme=light] body{background-image:radial-gradient(ellipse at 90% 6%,#8fc1ff51,transparent 33%),radial-gradient(ellipse at 5% 35%,#fff0a16b,transparent 32%)}
+.topbar{background:color-mix(in srgb,var(--bg) 91%,transparent);border-bottom:1px solid color-mix(in srgb,var(--accent) 22%,var(--line))}
+.brand{letter-spacing:-.055em}.brand-mark{background:#ffdc43;color:#052560;box-shadow:0 0 0 5px #ffda431b;transform:rotate(-8deg);transition:transform .3s}
+.brand:hover .brand-mark{transform:rotate(0) scale(1.06)}
+.brand-wordmark{font-weight:950}
+.button.primary,.nav-cta{background:#ffda40!important;border-color:#ffda40!important;color:#092b60!important;box-shadow:0 9px 0 #dbac1640,0 16px 28px #050d2725}
+.button,.icon-btn{transition:transform .23s ease,box-shadow .23s ease,border-color .23s ease}
+.button:hover{transform:translateY(-3px);box-shadow:0 12px 28px #0002}
+.button:active{transform:translateY(0)}
+.links a{transition:color .2s}
+.links a:hover,.links a[aria-current=page]{color:var(--accent)}
+.hero-premium{position:relative;isolation:isolate;border-radius:32px;margin-top:24px;padding:clamp(30px,5vw,66px);
+ background:linear-gradient(125deg,#062d75,#1155b1 56%,#147ab0);border:1px solid #80baff5b;
+ box-shadow:0 40px 80px #00122d46;overflow:hidden;gap:24px}
+.hero-premium:before{content:"";position:absolute;inset:-50% -50% auto auto;width:80%;aspect-ratio:1;
+ background:radial-gradient(circle,#ffdc424f,transparent 62%);pointer-events:none;z-index:-1}
+.hero-premium:after{content:"";position:absolute;left:0;right:0;bottom:0;height:7px;
+ background:linear-gradient(90deg,#ffdc3c 0 33%,#0870c9 33% 66%,#ffdc3c 66%)}
+.hero-premium .hero-copy{position:relative;z-index:2}
+.hero-premium .hero-kicker{font-size:12px;letter-spacing:.055em;color:#fff8d3}
+.hero-premium h1{color:#fff;letter-spacing:-.07em;text-wrap:balance;font-weight:900}
+.hero-premium h1 span{color:#ffe14e;filter:drop-shadow(0 4px 12px #d89c2060)}
+.hero-premium .hero-description{color:#e3eeff;max-width:570px}
+.hero-premium .button-glass{background:#ffffff1a!important;color:#fff!important;border-color:#ffffff71!important;backdrop-filter:blur(12px)}
+.hero-premium .hero-proof{color:#e3eeff}
+.hero-premium .premium-visual{border:1px solid #ffffff65;border-radius:30px;background:linear-gradient(150deg,#00275d,#123a82 65%,#0b5585);
+ box-shadow:0 30px 60px #00103370;transform:rotate(2deg);transition:transform .6s}
+.hero-premium .premium-visual:hover{transform:rotate(0) translateY(-5px)}
+.hero-premium .visual-orb{background:radial-gradient(circle,#ffd94388,transparent 67%)!important}
+.hero-premium .visual-route-pill{background:#ffe14e!important;color:#082b6a!important}
+.hero-premium .visual-float{animation:druFloat 5s ease-in-out infinite alternate}
+.hero-premium .visual-float-two{animation-delay:1.3s}
+.ukraine-ribbon{display:flex;align-items:center;gap:12px;width:fit-content;padding:9px 15px;border:1px solid #ffffff55;border-radius:99px;
+ color:#fff;background:#ffffff13;font-size:12px;font-weight:800;letter-spacing:.04em;margin:0 0 18px}
+.ukraine-ribbon .flag{width:27px;height:18px;border-radius:3px;background:linear-gradient(#1c80df 50%,#ffdb39 50%);box-shadow:0 0 0 2px #fff2}
+.ukraine-ribbon .ribbon-star{color:#ffdd49;font-size:17px;animation:druSparkle 4s ease-in-out infinite}
+.edu-ticker{overflow:hidden;border-block:1px solid #ffffff28;background:#083e87;color:white;white-space:nowrap}
+.edu-ticker-track{display:flex;gap:50px;align-items:center;width:max-content;min-height:50px;animation:druTicker 26s linear infinite;font-size:12px;font-weight:900;letter-spacing:.14em}
+.edu-ticker-track span b{color:#ffe052;font-size:17px;margin-right:18px}
+.edu-ticker:hover .edu-ticker-track{animation-play-state:paused}
+.trustbar{border-radius:24px!important;border:1px solid var(--line);background:var(--panel)!important;
+ box-shadow:var(--shadow);margin-top:30px!important}
+.trust-item strong{color:var(--accent)!important}
+.section-head h2{letter-spacing:-.06em}
+.card,.panel,.feature-row{border:1px solid var(--line)!important;border-radius:23px!important;box-shadow:0 15px 40px #00183d18;
+ transition:border-color .25s,transform .25s,box-shadow .25s}
+.card:hover,.feature-row:hover{transform:translateY(-5px);border-color:#ffcf2c!important;box-shadow:0 19px 45px #0003}
+.card .button:hover{transform:none}
+.premium-cta-section{position:relative;overflow:hidden}
+.premium-cta-inner{background:linear-gradient(125deg,#0652a4,#073879 65%,#031e52)!important;border:1px solid #4286ce!important;border-radius:30px!important}
+.premium-cta-inner h2,.premium-cta-inner p{color:white!important}
+.premium-cta-inner .button-glass{border-color:#fff8!important;color:white!important}
+#drive-time{border:1px solid var(--line);border-radius:28px;padding:clamp(24px,4vw,48px);background:linear-gradient(130deg,var(--panel),var(--panel2));position:relative;overflow:hidden}
+#drive-time:before{content:"↗";font-size:300px;line-height:1;color:var(--accent);opacity:.07;position:absolute;right:-5px;bottom:-65px;pointer-events:none}
+#drive-time .actions{position:relative}
+#share-platform{cursor:pointer}
+.edu-pride{display:flex;align-items:center;justify-content:center;gap:12px;text-align:center;padding:18px 24px;font-size:13px;font-weight:800;letter-spacing:.03em;color:var(--ink)}
+.edu-pride .mark{color:#ffd63b;font-size:22px}
+@keyframes druTicker{to{transform:translateX(-50%)}}
+@keyframes druFloat{from{transform:translateY(-3px)}to{transform:translateY(9px)}}
+@keyframes druSparkle{50%{transform:scale(1.3) rotate(18deg)}}
+@media(max-width:850px){.hero-premium{margin-top:12px;padding:30px 22px;border-radius:24px}.hero-premium .premium-visual{transform:none}.edu-ticker-track{animation-duration:35s}}
+@media(max-width:600px){.hero-premium{padding:26px 18px}.hero-premium h1{font-size:clamp(38px,10vw,55px)}.ukraine-ribbon{font-size:10px}.edu-pride{font-size:11px}.hero-premium .hero-actions{gap:10px}.hero-premium .button{width:100%}}
+@media(prefers-reduced-motion:reduce){.edu-ticker-track,.hero-premium .visual-float,.ukraine-ribbon .ribbon-star{animation:none!important}.button,.card,.feature-row,.premium-visual{transition:none!important}}
+@media print{.edu-ticker{display:none}}
