@@ -7,7 +7,7 @@ window.DRU={store,load,$};
 const theme=load('theme','dark')==='light'?'light':'dark';document.documentElement.dataset.theme=theme;
 const links=[
 ["index.html","Головна"],["quiz.html","Тести ПДР"],["routes.html","Маршрути"],["practice.html","Практика"],
-["coach.html","Іспит"],["intersections.html","Перехрестя"],["official-questions.html","Питання МВС"],
+["coach.html","Іспит"],["ready360.html","DRIVE READY 360°"],["intersections.html","Перехрестя"],["official-questions.html","Питання МВС"],
 ["exam-checklist.html","Чекліст"],["instructor.html","Інструктору"],["profile.html","Мій прогрес"],
 ["ads.html","Автошколам"]
 ];
