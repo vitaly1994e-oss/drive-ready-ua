@@ -33,7 +33,9 @@ try {
  await page.locator('#ad-submit').click();
  assert.equal(await page.locator('#ad-request-result').isVisible(),true);
  assert.match(await page.locator('#ad-request-result-info').innerText(),/Тестова автошкола/);
- assert.match(await page.locator('#ad-form-status').innerText(),/не надсилає дані автоматично/);
+ assert.match(await page.locator('#ad-form-status').innerText(),/Підтвердіть надсилання/);
+ assert.equal(await page.evaluate(()=>window.DRU_AD_CONFIG.receiverEmail),'vitaly1994e@gmail.com');
+ assert.match(await page.locator('#ad-send-email').innerText(),/Надіслати через пошту/);
  await page.locator('#ad-download').click();
  await page.goto(root+'/');
  assert.ok(await page.locator('#home-ads .ad-house').count()>0);
