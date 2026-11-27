@@ -7,7 +7,7 @@ const page=await context.newPage();
 const exceptions=[];
 page.on('pageerror',e=>exceptions.push(String(e)));
 try {
- const routes=['/','/routes.html','/quiz.html','/practice.html','/exam-checklist.html','/profile.html','/ads.html','/privacy.html','/terms.html','/coach.html','/intersections.html','/instructor.html','/404.html'];
+ const routes=['/','/routes.html','/quiz.html','/practice.html','/exam-checklist.html','/profile.html','/ads.html','/privacy.html','/terms.html','/coach.html','/official-questions.html','/intersections.html','/instructor.html','/404.html'];
  for(const route of routes){const response=await page.goto(root+route);assert.equal(response.status(),200,route);assert.equal(await page.locator('html').getAttribute('lang'),'uk',route);assert.ok(await page.locator('h1').count()>0,route);assert.ok(await page.locator('#site-header .brand').count()>0,route);}
  await page.goto(root+'/');
  await page.locator('#theme-toggle').click();
