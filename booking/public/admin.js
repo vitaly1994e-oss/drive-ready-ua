@@ -32,10 +32,10 @@ function renderBookings(){
  if(!entries.length){const tr=el('tr');const td=el('td','Записів за обраними умовами немає.');td.colSpan=7;td.className='empty-admin';tr.append(td);tbody.append(tr);return}
  for(const b of entries){
   const row=el('tr');
-  const items=[b.day,time(b.start_min),b.student_name,b.phone,b.note||'—',b.status==='confirmed'?'Підтверджено':'Скасовано'];
+  const duration=b.duration_min||60;const items=[b.day,time(b.start_min)+'–'+time(b.start_min+duration)+' · '+(duration%60===0?duration/60+' год':duration+' хв'),b.student_name,b.phone,b.note||'—',b.status==='confirmed'?'Підтверджено':'Скасовано'];
   items.forEach((v,i)=>{const td=el('td',v,i===5&&b.status==='cancelled'?'cancelled':'');row.append(td)});
   const last=el('td');
-  if(b.status==='confirmed'){const btn=el('button','Скасувати','danger');btn.onclick=async()=>{if(!confirm('Скасувати заняття '+b.day+' о '+time(b.start_min)+' для '+b.student_name+'? Час знову стане вільним.'))return;try{await post('/api/admin/cancel',{id:b.id});await sync();say('Запис скасовано. Годину звільнено.')}catch(e){say(e.message)}};last.append(btn)}
+  if(b.status==='confirmed'){const btn=el('button','Скасувати','danger');btn.onclick=async()=>{if(!confirm('Скасувати заняття '+b.day+' о '+time(b.start_min)+' для '+b.student_name+' (тривалість '+duration+' хв)? Увесь час заняття знову стане вільним.'))return;try{await post('/api/admin/cancel',{id:b.id});await sync();say('Запис скасовано. Годину звільнено.')}catch(e){say(e.message)}};last.append(btn)}
   row.append(last);tbody.append(row)
  }
 }
