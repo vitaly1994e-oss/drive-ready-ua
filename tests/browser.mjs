@@ -16,10 +16,11 @@ try {
  assert.equal(await page.locator('.premium-footer').count(),1);
  assert.ok(await page.locator('#nav-links a[href="quiz.html"]').count()>0);
  assert.ok(await page.locator('.hero-actions a[href="routes.html"]').count()>0);
+ assert.equal(await page.locator('html').getAttribute('data-theme'),'light');
  await page.locator('#theme-toggle').click();
- assert.equal(await page.locator('html').getAttribute('data-theme'),'light');
+ assert.equal(await page.locator('html').getAttribute('data-theme'),'dark');
  await page.reload();
- assert.equal(await page.locator('html').getAttribute('data-theme'),'light');
+ assert.equal(await page.locator('html').getAttribute('data-theme'),'dark');
  await page.goto(root+'/ads.html');
  assert.equal(await page.locator('.ads-price-card').count(),3);
  assert.ok(await page.locator('#ad-request-form').count()>0);
