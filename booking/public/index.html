@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f5f5ef"><meta name="description" content="DRIVE TIME — зручний запис на практичні заняття з водіння. Оберіть дату, час і тривалість уроку."><title>DRIVE TIME — Твій час за кермом</title><link rel="stylesheet" href="/style.css"><link rel="icon" type="image/svg+xml" href="/favicon.svg"></head>
+<html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f5f5ef"><meta name="description" content="DRIVE TIME — зручний запис на практичні заняття з водіння. Оберіть дату, час і тривалість уроку."><title>DRIVE TIME — Твій час за кермом</title><link rel="stylesheet" href="/booking-v3.css"><link rel="icon" type="image/svg+xml" href="/favicon.svg"></head>
 <body>
 <header class="top"><div class="wrap top-content">
 <a class="logo" href="/" aria-label="DRIVE TIME"><span class="logo-icon">↗</span><span class="logo-text">DRIVE<span>TIME</span><small>ТВОЯ ТЕРИТОРІЯ ВОДІННЯ</small></span></a>
@@ -9,7 +9,7 @@
 <section class="hero wrap"><div class="hero-left">
 <div class="eyebrow"><span class="eyebrow-dot"></span> ПРИВАТНІ УРОКИ ВОДІННЯ · ХАРКІВ</div>
 <h1>Водіння у твоєму <em>ритмі.</em></h1>
-<p class="hero-desc">Ти обираєш, коли і скільки займатися. Ми залишаємо тобі вільну дорогу до водійського посвідчення.</p>
+<p class="hero-desc">Ти обираєш, коли почати й коли закінчити заняття. Ми залишаємо тобі вільну дорогу до водійського посвідчення.</p>
 <div class="hero-actions"><a class="primary-btn hero-primary" href="#booking">Обрати свій час <span>↗</span></a><span class="hero-trust"><span class="trust-circle">✓</span> Без дзвінків. Без зайвих кроків.</span></div>
 <div class="hero-foot"><div><strong>06:00—21:00</strong><small>Час занять*</small></div><div><strong>7 днів</strong><small>Графік щотижня*</small></div><div><strong>30 хв — 15 год</strong><small>Твоя тривалість</small></div></div>
 </div>
@@ -22,17 +22,15 @@
 <div class="booking-heading"><div><span class="eyebrow">ЗАПИС ЗА 3 ПРОСТІ КРОКИ</span><h2>Обери час. <em>І поїхали.</em></h2><p>Запис підтверджується миттєво. Час, який уже зайнятий, не можна забронювати повторно.</p></div><div class="booking-heading-badge"><span>●</span> Онлайн 24/7</div></div>
 <div class="booking-layout"><div class="booking-main">
 <div class="panel calendar">
-<div class="step-head"><span class="step-number">01</span><div><h3>Скільки часу хочеш за кермом?</h3><p>Від 30 хвилин до цілого робочого дня.</p></div></div>
-<div class="duration-box">
-<div class="duration-control"><button type="button" id="duration-minus" aria-label="Зменшити тривалість на 30 хвилин">−</button><div class="duration-value"><strong id="duration-label">1 година</strong><small id="duration-subtitle">60 хвилин практики</small></div><button type="button" id="duration-plus" aria-label="Збільшити тривалість на 30 хвилин">+</button></div>
-<div class="duration-quick" role="group" aria-label="Швидкий вибір тривалості"><button type="button" data-duration="60" class="active">1 год</button><button type="button" data-duration="90">1,5 год</button><button type="button" data-duration="120">2 год</button><button type="button" data-duration="180">3 год</button><button type="button" data-duration="240">4 год</button></div>
-</div>
+<div class="step-head"><span class="step-number">01</span><div><h3>Обери день заняття</h3><p>Спочатку день, потім час початку та завершення.</p></div></div>
+<div class="calendar-header"><div><strong id="month-title">Обери день</strong><span class="muted">Час за Києвом</span></div><div class="arrow-controls"><button id="prev-week" aria-label="Попередній тиждень" type="button">←</button><button id="next-week" aria-label="Наступний тиждень" type="button">→</button></div></div>
+<div id="date-list" class="date-list" aria-label="Обери день"></div><p id="calendar-message" class="muted small" role="status"></p>
 <div class="calendar-divider"></div>
-<div class="step-head"><span class="step-number">02</span><div><h3>Коли тобі зручно?</h3><p>Доступні години перераховуються під обрану тривалість.</p></div></div>
-<div class="calendar-header"><div><strong id="month-title">Обери день</strong><span class="muted">Час за Києвом</span></div><div class="arrow-controls"><button id="prev-week" aria-label="Попередні дні" type="button">←</button><button id="next-week" aria-label="Наступні дні" type="button">→</button></div></div>
-<div id="date-list" class="date-list" aria-label="Дні для запису"></div><p id="calendar-message" class="muted small" role="status"></p>
-<div class="time-header"><div><strong>Початок заняття</strong><small id="selected-day-label">Оберіть день</small></div><div class="legend"><span><i class="free-dot"></i> Вільно</span><span><i class="busy-dot"></i> Зайнято</span></div></div>
-<div id="time-grid" class="time-grid" aria-label="Вільні години"><div class="empty-time">Завантажуємо графік…</div></div>
+<div class="step-head"><span class="step-number">02</span><div><h3>Обери години прямо в календарі</h3><p>Натисни <b>06:00</b>, потім <b>08:00</b> — отримаєш урок з 06:00 до 08:00.</p></div></div>
+<div class="range-choice" aria-live="polite"><div class="range-pill"><small>ПОЧАТОК</small><strong id="range-start-label">Не обрано</strong></div><span class="range-divider">→</span><div class="range-pill"><small>ЗАВЕРШЕННЯ</small><strong id="range-end-label">Не обрано</strong></div><button class="range-reset" id="range-reset" type="button" disabled>Змінити</button></div>
+<div class="time-header"><div><strong id="time-step-heading">1. О котрій починаємо?</strong><small id="selected-day-label">Оберіть дату</small></div><div class="legend"><span><i class="free-dot"></i> Вільно</span><span><i class="busy-dot"></i> Зайнято</span></div></div>
+<div id="time-grid" class="time-grid" aria-label="Час початку заняття"><div class="empty-time">Завантажуємо години…</div></div>
+<div id="end-time-panel" class="end-time-panel hidden"><div class="end-time-heading"><strong>2. О котрій закінчуємо?</strong><span>Обери будь-яку доступну годину завершення</span></div><div id="end-time-grid" class="time-grid end-options" aria-label="Час завершення заняття"></div></div>
 <p class="slot-note small muted">* Реальний графік може змінюватися інструктором. Усі години в часовому поясі Europe/Kyiv.</p>
 </div>
 <div class="panel booking-details" id="details">
@@ -46,6 +44,13 @@
 </div>
 </div>
 <aside class="booking-aside">
+<a class="promo-side" href="https://drive-ready-ua.onrender.com/" target="_blank" rel="noopener noreferrer" aria-label="Перейти на Drive Ready UA — безкоштовні тести ПДР і маршрути">
+  <span class="promo-side-top">НАША НАВЧАЛЬНА ПЛАТФОРМА <span>↗</span></span>
+  <span class="promo-side-brand"><span class="promo-side-icon">↗</span><strong>DRIVE<br>READY <em>UA</em></strong></span>
+  <span class="promo-side-heading">Практика — тут.<br>Теорія — там.</span>
+  <span class="promo-side-sub">Тести ПДР, маршрути ТСЦ та підготовка до іспиту. Повністю безкоштовно.</span>
+  <span class="promo-side-action">Перейти на DRIVE READY UA <span>↗</span></span>
+</a>
 <div class="aside-card aside-steps"><span class="eyebrow">ЧОМУ ЦЕ ЗРУЧНО</span><h3>Усе просто.<br>Без зайвого.</h3><div class="step"><span>01</span><div><strong>Сам обираєш тривалість</strong><p>Можеш взяти одну, дві, три години або більше.</p></div></div><div class="step"><span>02</span><div><strong>Бачиш тільки доступне</strong><p>Календар враховує всі записи та вихідні.</p></div></div><div class="step"><span>03</span><div><strong>Не забудеш про урок</strong><p>Додай подію в календар або поділися текстом нагадування.</p></div></div></div>
 <div class="aside-card aside-help"><span class="eyebrow">ПОТРІБНО ПЕРЕНЕСТИ?</span><h3>Плани змінилися?</h3><p>Для перенесення чи скасування звернися до інструктора, повідомивши код підтвердження.</p></div>
 </aside>

@@ -78,6 +78,27 @@ app.get('/health',async(req,res)=>{try{await pool.query('SELECT 1');res.json({ok
 app.get('/api/info',async(req,res)=>{try{const c=nowKyiv(),d=await setting();res.json({timezone:TIME_ZONE,today:c.date,duration:d,horizon:60})}catch{errs(res,503,'Календар тимчасово недоступний')}});
 app.get('/api/days',async(req,res)=>{try{const today=nowKyiv().date,from=txt(req.query.from,10)||today;if(!validateDate(from))return errs(res,400,'Невірна дата');const desired=bookingDuration(Number(req.query.durationMinutes))||60;const n=Math.min(Math.max(Number.parseInt(req.query.count)||14,1),31);const days=[];for(let i=0;i<n;i++){const day=dateAdd(from,i);if(!validateDate(day))break;const list=await slots(day,pool,desired);days.push({date:day,free:list.filter(x=>x.status==='free').length,total:list.length})}res.set('Cache-Control','no-store');res.json({days})}catch(e){console.error('days failed',e.message);errs(res,503,'Календар тимчасово недоступний')}});
 app.get('/api/slots',async(req,res)=>{const date=txt(req.query.date,10);if(!validateDate(date))return errs(res,400,'Невірна дата');try{res.set('Cache-Control','no-store');res.json({date,slots:await slots(date,pool,bookingDuration(Number(req.query.durationMinutes))||60)})}catch(e){console.error('slots failed',e.message);errs(res,503,'Графік тимчасово недоступний')}});
+app.get('/api/ends',async(req,res)=>{
+ const date=txt(req.query.date,10),start=m(req.query.start);
+ if(!validateDate(date)||start===null)return errs(res,400,'Невірні дата або час');
+ try{
+  const sc=await schedule(date),now=nowKyiv(),all=[];
+  if(!sc.enabled||start<sc.start||(start-sc.start)%sc.duration!==0||start+30>sc.end||(date===now.date&&start<now.minutes+30))
+   return res.json({date,start:hhmm(start),ends:[]});
+  const [taken,blocked]=await Promise.all([
+   pool.query("SELECT start_min,duration_min FROM booking_appointments WHERE day=$1 AND status='confirmed'",[date]),
+   pool.query("SELECT start_min,duration_min FROM booking_blocks WHERE day=$1",[date])
+  ]);
+  for(let d=30;d<=900&&start+d<=sc.end;d+=30){
+   const end=start+d;
+   const clash=taken.rows.some(x=>overlap(start,end,x.start_min,x.start_min+x.duration_min))||
+     blocked.rows.some(x=>overlap(start,end,x.start_min,x.start_min+x.duration_min));
+   if(clash)break;
+   all.push({time:hhmm(end),durationMinutes:d});
+  }
+  res.set('Cache-Control','no-store');res.json({date,start:hhmm(start),ends:all});
+ }catch(e){console.error('end options failed',e.message);errs(res,503,'Не вдалося перевірити вільний проміжок')}
+});
 app.post('/api/book',async(req,res)=>{
  if(limit('book:'+req.ip,12,3600000))return errs(res,429,'Забагато спроб. Повтори пізніше');
  if(req.body.website)return errs(res,400,'Заявку відхилено');

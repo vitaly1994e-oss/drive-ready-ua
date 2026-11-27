@@ -11,10 +11,22 @@ test('Two simultaneous students cannot reserve the same lesson',async()=>{
  const date=dateAdd(info.body.today,2),slots=await req('/api/slots?date='+date+'&durationMinutes=180');
  assert.equal(slots.status,200);assert.equal(slots.body.slots[0].time,'06:00');assert.equal(slots.body.slots.at(-1).time,'20:00');
  const selected=slots.body.slots.find(s=>s.status==='free');assert.ok(selected);
+ const ends=await req('/api/ends?date='+date+'&start='+selected.time);
+ assert.equal(ends.status,200);
+ assert.equal(ends.body.start,'06:00');
+ assert.ok(ends.body.ends.some(x=>x.time==='07:00'&&x.durationMinutes===60));
+ assert.ok(ends.body.ends.some(x=>x.time==='08:00'&&x.durationMinutes===120));
+ assert.ok(ends.body.ends.some(x=>x.time==='21:00'&&x.durationMinutes===900));
+
  const submission={date,time:selected.time,durationMinutes:180,name:'Тестовий учень',phone,note:'Лише автоматичний тест',website:''};
  const responses=await Promise.all([req('/api/book',json('POST',submission)),req('/api/book',json('POST',submission))]);
  assert.deepEqual(responses.map(r=>r.status).sort(),[201,409]);
  assert.equal(responses.find(r=>r.status===201).body.duration,180);
+ const endsAfter=await req('/api/ends?date='+date+'&start=06:00');
+ assert.equal(endsAfter.status,200);
+ assert.equal(endsAfter.body.ends.length,0,'cannot select finish inside booked 3-hour lesson');
+ const endsFromNine=await req('/api/ends?date='+date+'&start=09:00');
+ assert.ok(endsFromNine.body.ends.some(x=>x.time==='10:00'));
  const reserved=await req('/api/slots?date='+date+'&durationMinutes=60');
  for(const h of ['06:00','07:00','08:00'])assert.equal(reserved.body.slots.find(x=>x.time===h).status,'busy');
  assert.equal(reserved.body.slots.find(x=>x.time==='09:00').status,'free');
