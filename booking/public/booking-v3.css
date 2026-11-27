@@ -109,3 +109,20 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 .promo-emblem{transform:rotate(-4deg);box-shadow:0 13px 30px #0c28184a}
 @media(max-width:850px){.booking-layout{grid-template-columns:minmax(0,1fr)}.booking-aside{grid-template-columns:1fr 1fr}.cross-promo-inner{grid-template-columns:1fr}.cross-promo-art{min-height:310px;height:340px;max-width:570px;width:100%;margin:auto}}
 @media(max-width:640px){.hero{padding:24px 0 26px}.hero-visual{display:none}.hero h1{font-size:clamp(37px,10vw,52px);margin:10px 0 14px}.hero .eyebrow{font-size:9px}.hero-desc{font-size:14px;line-height:1.65}.hero-actions{margin-top:17px}.hero-primary{padding:13px 16px;min-height:44px}.hero-foot{padding-top:14px;margin-top:15px;gap:12px}.hero-foot strong{font-size:12px}.hero-foot small{font-size:9px}.booking-wrap{padding:32px 0 55px}.booking-heading{margin-bottom:19px}.booking-heading h2{font-size:31px;margin:6px 0}.booking-heading p{font-size:12px}.calendar{padding:18px 14px}.step-head h3{font-size:17px}.step-head p{font-size:11px;line-height:1.6}.step-number{height:34px;width:34px;border-radius:10px}.calendar-header{margin:10px 0 14px}.date-list{gap:4px}.date-button{min-height:65px;padding:8px 0}.date-button strong{font-size:20px}.range-choice{gap:7px;padding:9px}.range-pill{min-width:0;flex:1;padding:9px 7px}.range-pill strong{font-size:19px}.range-pill small{font-size:8px}.range-divider{font-size:18px}.range-reset{width:100%;min-height:35px}.time-grid,.end-options{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.time-button{min-height:63px;padding:8px 2px}.time-button strong{font-size:20px}.time-button small{font-size:10px}.end-time-panel{padding:12px}.end-time-heading strong{font-size:15px}.cross-promo{padding:35px 0 44px}.cross-promo-art{height:220px;min-height:220px}.cross-promo-art:before{height:180px;width:180px}.cross-promo-art:after{height:225px;width:225px}.promo-monogram{height:88px;width:88px;font-size:67px;border-radius:25px}.cross-promo h2{font-size:30px}.cross-promo p{line-height:1.65}.promo-tags{margin:12px 0}.big-promo-logo{margin:12px 0}.big-promo-logo strong{font-size:25px}}
+
+/* Close-to-booking brand ad: not an intrusive overlay */
+.promo-side{display:grid;gap:15px;text-decoration:none;color:white;border-radius:21px;padding:25px;min-height:350px;background:radial-gradient(circle at 95% -10%,#466f45,transparent 60%),#183628;border:1px solid #476747;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.promo-side:hover{transform:translateY(-3px);box-shadow:0 19px 45px #102e2033}
+.promo-side:before{content:"";position:absolute;height:240px;width:240px;border-radius:50%;border:1px solid #75a56d55;top:29px;right:-110px}
+.promo-side-top{display:flex;align-items:center;justify-content:space-between;font-size:9px;letter-spacing:.12em;font-weight:830;color:#c5e0b7;position:relative}
+.promo-side-top>span{font-size:19px}
+.promo-side-brand{display:flex;align-items:center;gap:15px;position:relative}
+.promo-side-icon{width:58px;height:58px;display:grid;place-items:center;background:#bcf17e;color:#1b3624;border-radius:14px;font-size:38px}
+.promo-side-brand strong{font-size:30px;font-weight:900;line-height:1.02;letter-spacing:-.065em}
+.promo-side-brand em{font-size:12px;color:#baf18d;font-style:normal}
+.promo-side-heading{position:relative;font-size:28px;line-height:1.15;letter-spacing:-.055em;font-weight:850}
+.promo-side-sub{position:relative;color:#c0d8bf;font-size:12px;line-height:1.8}
+.promo-side-action{display:flex;align-items:center;justify-content:space-between;position:relative;background:#c4f089;color:#193a24;padding:14px 13px;border-radius:11px;font-size:11px;font-weight:850}
+.promo-side-action span{font-size:18px}
+@media(max-width:850px){.promo-side{min-height:0;grid-column:1/-1;gap:12px}.booking-aside{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.booking-aside{grid-template-columns:1fr}.promo-side{min-height:0;padding:20px}.promo-side-brand strong{font-size:28px}.promo-side-heading{font-size:25px}}
