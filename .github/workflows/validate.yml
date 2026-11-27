@@ -1,7 +1,7 @@
 name: Перевірка сайту
 on:
   push:
-    branches: [main, upgrade-2026-11-27]
+    branches: [main, upgrade-2026-11-27, audit-fixes-2026-11-27]
   pull_request:
     branches: [main]
 jobs:
@@ -14,3 +14,17 @@ jobs:
           node-version: '22'
       - name: Перевірити сторінки та JavaScript
         run: python3 tests/validate.py
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save playwright@1.57.0
+      - run: npx playwright install --with-deps chromium
+      - name: Запустити локальний сайт і браузерні тести
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/drive-ready-server.log 2>&1 &
+          sleep 2
+          node tests/browser.mjs
