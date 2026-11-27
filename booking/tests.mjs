@@ -6,7 +6,7 @@ test('Public booking UX has real server booking and confirmation, not localStora
  for(const x of ['id="date-list"','id="time-grid"','id="booking-form"','id="booking-success"','id="download-calendar"'])assert.ok(html.includes(x),x);
  assert.ok(html.includes('https://drive-ready-ua.onrender.com/'));
  assert.ok(js.includes("await fetch("));
- assert.ok(js.includes("await fetch("));
+ assert.ok(js.includes("/api/book"));
  assert.doesNotMatch(js,/localStorage|sessionStorage/);
 });
 test('Admin access is enforced by server API and server-side database',()=>{
