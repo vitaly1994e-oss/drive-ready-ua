@@ -60,6 +60,9 @@ try {
  assert.match(await page.locator('#counter').innerText(),/1 з 20/);
  await page.locator('#stop').click();
  await page.goto(root+'/practice.html');
+ await page.locator('#voice-start').click();
+ assert.ok((await page.locator('#voice-status').innerText()).length>10);
+ assert.equal(await page.locator('#voice-on').isChecked(),true);
  await page.locator('#voice-on').uncheck();
  await page.locator('#answers .answer').first().click();
  await page.locator('#next').click();
@@ -73,6 +76,8 @@ try {
  assert.match(await page.locator('#total').innerText(),/2/);
  await page.locator('#export').click();
  await page.goto(root+'/coach.html');
+ await page.locator('#test-voice').click();
+ assert.ok((await page.locator('#coach-voice-status').innerText()).length>10);
  await page.locator('#speech-choice').selectOption('no');
  await page.locator('#start-exam').click();
  assert.match(await page.locator('#exam-progress').innerText(),/1 із 7/);
