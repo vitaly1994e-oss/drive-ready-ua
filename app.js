@@ -9,7 +9,7 @@ const links=[
 ["index.html","Головна"],["quiz.html","Тести ПДР"],["routes.html","Маршрути"],["practice.html","Практика"],
 ["coach.html","Іспит"],["intersections.html","Перехрестя"],["official-questions.html","Питання МВС"],
 ["exam-checklist.html","Чекліст"],["instructor.html","Інструктору"],["profile.html","Мій прогрес"],
-["ads.html","Автошколам"]
+["ads.html","Автошколам"],["https://drive-time-booking-ov62.onrender.com/","Запис на водіння"]
 ];
 const main=links.slice(0,5),more=links.slice(5);
 function navLink([href,label]){const a=document.createElement('a');a.href=href;a.textContent=label;const path=location.pathname.split('/').pop()||'index.html';if(href===path)a.setAttribute('aria-current','page');return a}
@@ -28,7 +28,7 @@ const actions=document.createElement('div');actions.className='nav-actions';
 const themeButton=document.createElement('button');themeButton.type='button';themeButton.className='icon-btn theme-btn';themeButton.id='theme-toggle';themeButton.setAttribute('aria-label','Перемкнути світлу або темну тему');themeButton.title='Змінити тему';
 const updateThemeIcon=()=>{themeButton.innerHTML=document.documentElement.dataset.theme==='dark'?'☀':'☾'};
 updateThemeIcon();themeButton.onclick=()=>{const next=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=next;store('theme',next);updateThemeIcon()};
-const cta=document.createElement('a');cta.href='quiz.html';cta.className='button primary nav-cta';cta.textContent='Почати навчання ↗';
+const cta=document.createElement('a');cta.href='https://drive-time-booking-ov62.onrender.com/';cta.className='button primary nav-cta';cta.textContent='Запис на водіння ↗';cta.setAttribute('aria-label','Онлайн-запис на практичне заняття з водіння DRIVE TIME');
 const toggle=document.createElement('button');toggle.type='button';toggle.id='menu-toggle';toggle.className='icon-btn menu-btn';toggle.setAttribute('aria-controls','nav-links');toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','Відкрити меню');toggle.textContent='☰';
 toggle.onclick=()=>{const open=nav.classList.toggle('open');toggle.setAttribute('aria-expanded',String(open));toggle.setAttribute('aria-label',open?'Закрити меню':'Відкрити меню');toggle.textContent=open?'✕':'☰'};
 nav.addEventListener('click',e=>{if(e.target.closest('a')){nav.classList.remove('open');toggle.setAttribute('aria-expanded','false');toggle.textContent='☰'}});
@@ -42,7 +42,7 @@ const container=document.createElement('div');container.className='container pre
 const left=document.createElement('div');left.className='footer-intro';
 left.innerHTML='<a class="brand" href="index.html"><span class="brand-mark">↗</span><span class="brand-wordmark">DRIVE<span>READY</span><small>UA</small></span></a><p>Безкоштовна підготовка до іспитів з водіння. Теорія, практика та маршрути — в одному місці.</p>';
 const columns=document.createElement('div');columns.className='footer-columns';
-const groups=[['Підготовка',[["quiz.html","Тести ПДР"],["routes.html","Маршрути МВС"],["coach.html","Пробний іспит"],["intersections.html","Перехрестя"]]],['Про платформу',[["profile.html","Мій прогрес"],["instructor.html","Інструкторам"],["ads.html","Автошколам"],["privacy.html","Конфіденційність"],["terms.html","Умови"]]]];
+const groups=[['Підготовка',[["quiz.html","Тести ПДР"],["routes.html","Маршрути МВС"],["coach.html","Пробний іспит"],["intersections.html","Перехрестя"]]],['Про платформу',[["profile.html","Мій прогрес"],["instructor.html","Інструкторам"],["ads.html","Автошколам"],["https://drive-time-booking-ov62.onrender.com/","Запис на водіння"],["privacy.html","Конфіденційність"],["terms.html","Умови"]]]];
 for(const [name,list] of groups){const col=document.createElement('div');const h=document.createElement('strong');h.textContent=name;col.append(h);for(const item of list)col.append(navLink(item));columns.append(col)}
 container.append(left,columns);const bottom=document.createElement('div');bottom.className='container footer-bottom';bottom.innerHTML='<span>© 2026 Drive Ready UA. Незалежний освітній проєкт.</span><span>Не є офіційним сайтом МВС України</span>';
 el.replaceChildren(container,bottom)}
