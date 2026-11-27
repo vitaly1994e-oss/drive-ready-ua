@@ -39,6 +39,11 @@ try {
  await page.locator('#search').fill('6350');
  assert.equal(await page.locator('.route-open').count(),10);
  assert.match(await page.locator('.route-open').first().innerText(),/Схема №1/);
+ await page.locator('#search').fill('6342');
+ await page.locator('.route-open').first().click();
+ await page.locator('#route-modal-image').evaluate(img=>new Promise(resolve=>{if(img.complete)return resolve();img.addEventListener('load',resolve,{once:true});img.addEventListener('error',resolve,{once:true});setTimeout(resolve,9000)}));
+ assert.ok(await page.locator('#route-modal-image').evaluate(img=>img.naturalWidth>0),'Картинка маршруту 6342 має завантажуватися');
+ await page.keyboard.press('Escape');
  await page.locator('#search').fill('7141');
  assert.equal(await page.locator('.route-open').count(),2);
  await page.locator('#search').fill('0541');
