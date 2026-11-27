@@ -60,3 +60,12 @@ test('Student can find future lessons by phone without any booking reference cod
  assert.ok(calendar.includes('TRIGGER:-PT24H')&&calendar.includes('TRIGGER:-PT1H'));
  assert.ok(get('public/admin.html').includes('id="export-ics"'));
 });
+
+test('Surname and given name are both required without a student access code',()=>{
+ const html=get('public/index.html'),ui=get('public/app.js'),server=get('server.js');
+ for(const field of ['id="student-surname"','id="student-name"','autocomplete="family-name"','autocomplete="given-name"'])assert.ok(html.includes(field),field);
+ assert.ok(ui.includes("const name=surname+' '+given"));
+ assert.ok(server.includes('nameParts.length<2'));
+ assert.ok(html.includes('id="confirm-student"'));
+ assert.ok(!html.includes('id="student-code"'));
+});
