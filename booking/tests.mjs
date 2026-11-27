@@ -69,3 +69,15 @@ test('Surname and given name are both required without a student access code',()
  assert.ok(html.includes('id="confirm-student"'));
  assert.ok(!html.includes('id="student-code"'));
 });
+
+test('Theme switch is available on every booking screen and uses persistent independent mode',()=>{
+ for(const page of ['public/index.html','public/manage.html','public/admin.html']){
+  const html=get(page);
+  assert.ok(html.includes('data-theme-toggle'),page);
+  assert.ok(html.includes('/theme.js')&&html.includes('/dark-theme.css'),page);
+  assert.ok(html.includes('https://drive-ready-ua.onrender.com/'),page);
+ }
+ const script=get('public/theme.js'),css=get('public/dark-theme.css');
+ assert.ok(script.includes('localStorage.setItem')&&script.includes('data-theme'));
+ assert.ok(css.includes('html[data-theme="dark"]')&&css.includes('.booking-policy'));
+});
