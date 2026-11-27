@@ -10,6 +10,12 @@ try {
  const routes=['/','/routes.html','/quiz.html','/practice.html','/exam-checklist.html','/profile.html','/ads.html','/privacy.html','/terms.html','/coach.html','/official-questions.html','/quiz-training.html','/intersections.html','/instructor.html','/404.html'];
  for(const route of routes){const response=await page.goto(root+route);assert.equal(response.status(),200,route);assert.equal(await page.locator('html').getAttribute('lang'),'uk',route);assert.ok(await page.locator('h1').count()>0,route);assert.ok(await page.locator('#site-header .brand').count()>0,route);}
  await page.goto(root+'/');
+ assert.equal(await page.locator('.feature-card').count(),6);
+ assert.ok(await page.locator('.hero-premium h1').count()>0);
+ assert.ok(await page.locator('.trustbar').count()>0);
+ assert.equal(await page.locator('.premium-footer').count(),1);
+ assert.ok(await page.locator('#nav-links a[href="quiz.html"]').count()>0);
+ assert.ok(await page.locator('.hero-actions a[href="routes.html"]').count()>0);
  await page.locator('#theme-toggle').click();
  assert.equal(await page.locator('html').getAttribute('data-theme'),'light');
  await page.reload();
@@ -130,7 +136,13 @@ try {
   await mp.locator('#menu-toggle').click();
   assert.equal(await mp.locator('#nav-links').evaluate(e=>e.classList.contains('open')),true);
  }
- await mobile.close();
+ await mp.goto(root+'/');
+ assert.equal(await mp.locator('.feature-card').count(),6);
+ await mp.locator('#menu-toggle').click();
+ assert.equal(await mp.locator('#nav-links').evaluate(e=>e.classList.contains('open')),true);
+ await mp.locator('#nav-links a[href="intersections.html"]').click();
+ assert.match(mp.url(),/intersections.html/);
+  await mobile.close();
  assert.deepEqual(exceptions,[]);
  console.log('PASS: 13 сторінок, навігація, маршрути, теорія, практика, чекліст, профіль, мобільні екрани, браузерні помилки');
 }finally{await browser.close()}
