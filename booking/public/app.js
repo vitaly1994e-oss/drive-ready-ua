@@ -140,13 +140,13 @@ const googleEnd=r=>r.date.replaceAll('-','')+'T'+hm(toMinutes(r.time)+r.duration
 function setupCalendarLinks(r){
  const q=new URLSearchParams({action:'TEMPLATE',text:'Заняття з водіння · DRIVE TIME',dates:googleDate(r)+'/'+googleEnd(r),ctz:'Europe/Kyiv',details:reminderText(r)});
  $('#google-calendar').href='https://calendar.google.com/calendar/render?'+q.toString();
- $('#reminder-status').textContent='У календарній події вже є нагадування за годину до уроку.'
+ $('#reminder-status').textContent='Перевір налаштування сповіщень календаря. Файл .ics містить нагадування за 24 години та за 1 годину до уроку.'
 }
 function icsEscape(s){return String(s).replaceAll('\\','\\\\').replaceAll(',','\\,').replaceAll(';','\\;').replaceAll('\n','\\n')}
 $('#download-calendar').onclick=()=>{
  const r=state.receipt;if(!r)return;
  const start=googleDate(r),end=googleEnd(r);
- const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//DRIVE TIME//Driving Lesson//UK','CALSCALE:GREGORIAN','BEGIN:VEVENT','UID:'+r.code+'@drive-time-booking','DTSTAMP:'+new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,''),'DTSTART;TZID=Europe/Kyiv:'+start,'DTEND;TZID=Europe/Kyiv:'+end,'SUMMARY:'+icsEscape('Заняття з водіння · DRIVE TIME'),'DESCRIPTION:'+icsEscape(reminderText(r)),'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+icsEscape('Скоро заняття з водіння · DRIVE TIME'),'TRIGGER:-PT1H','END:VALARM','END:VEVENT','END:VCALENDAR'];
+ const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//DRIVE TIME//Driving Lesson//UK','CALSCALE:GREGORIAN','BEGIN:VEVENT','UID:'+r.code+'@drive-time-booking','DTSTAMP:'+new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,''),'DTSTART;TZID=Europe/Kyiv:'+start,'DTEND;TZID=Europe/Kyiv:'+end,'SUMMARY:'+icsEscape('Заняття з водіння · DRIVE TIME'),'DESCRIPTION:'+icsEscape(reminderText(r)),'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+icsEscape('Скоро заняття з водіння · DRIVE TIME'),'TRIGGER:-PT1H','END:VALARM','BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+icsEscape('Завтра заняття з водіння · DRIVE TIME'),'TRIGGER:-PT24H','END:VALARM','END:VEVENT','END:VCALENDAR'];
  const blob=new Blob([lines.join('\r\n')+'\r\n'],{type:'text/calendar;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='drive-time-lesson.ics';a.click();setTimeout(()=>URL.revokeObjectURL(url),2500)
 };
 $('#share-reminder').onclick=async()=>{
