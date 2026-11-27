@@ -101,8 +101,8 @@ $('#ad-copy').addEventListener('click',async()=>{
 });
 $('#ad-download').addEventListener('click',()=>{
  if(!prepared)return;
- const text=toText(prepared);
- const blob=new Blob([text],{type:'text/plain;charset=utf-8'});
+ const payload=toText(prepared);
+ const blob=new Blob([payload],{type:'text/plain;charset=utf-8'});
  const url=URL.createObjectURL(blob);
  const a=document.createElement('a');a.href=url;a.download='drive-ready-zayavka.txt';a.click();
  setTimeout(()=>URL.revokeObjectURL(url),2500);
