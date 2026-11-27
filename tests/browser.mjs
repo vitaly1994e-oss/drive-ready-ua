@@ -10,6 +10,12 @@ try {
  const routes=['/','/routes.html','/quiz.html','/practice.html','/exam-checklist.html','/profile.html','/ads.html','/privacy.html','/terms.html','/coach.html','/official-questions.html','/quiz-training.html','/intersections.html','/instructor.html','/404.html'];
  for(const route of routes){const response=await page.goto(root+route);assert.equal(response.status(),200,route);assert.equal(await page.locator('html').getAttribute('lang'),'uk',route);assert.ok(await page.locator('h1').count()>0,route);assert.ok(await page.locator('#site-header .brand').count()>0,route);}
  await page.goto(root+'/');
+ assert.equal(await page.locator('.feature-card').count(),6);
+ assert.ok(await page.locator('.hero-premium h1').count()>0);
+ assert.ok(await page.locator('.trustbar').count()>0);
+ assert.equal(await page.locator('.premium-footer').count(),1);
+ assert.ok(await page.locator('#nav-links a[href="quiz.html"]').count()>0);
+ assert.ok(await page.locator('.hero-actions a[href="routes.html"]').count()>0);
  await page.locator('#theme-toggle').click();
  assert.equal(await page.locator('html').getAttribute('data-theme'),'light');
  await page.reload();
@@ -17,9 +23,10 @@ try {
  await page.goto(root+'/routes.html');
  await page.locator('#search').fill('6341');
  assert.equal(await page.locator('.route-card').count(),1);
- assert.equal(await page.locator('.route-open').count(),20);
+ assert.equal(await page.locator('.route-open').count(),1);
  await page.locator('.route-open').first().click();
  assert.equal(await page.locator('#route-modal').isVisible(),true);
+ assert.equal(await page.locator('#route-chooser option').count(),20);
  assert.match(await page.locator('#route-modal-title').innerText(),/6341.*маршрут №1/);
  assert.match(await page.locator('#route-modal-image').getAttribute('src'),/(hsc\.gov\.ua|web\.testpdr\.com)/);
  await page.locator('#route-zoom-in').click();
@@ -33,21 +40,21 @@ try {
  assert.match(await page.locator('#detail').innerText(),/8 вересня 2026/);
  assert.equal(await page.locator('#detail .route-open').count(),0);
  await page.locator('#search').fill('6342');
- assert.equal(await page.locator('.route-open').count(),20);
+ assert.equal(await page.locator('.route-open').count(),1);
  await page.locator('#search').fill('6348');
- assert.equal(await page.locator('.route-open').count(),5);
+ assert.equal(await page.locator('.route-open').count(),1);
  await page.locator('#search').fill('6350');
- assert.equal(await page.locator('.route-open').count(),10);
- assert.match(await page.locator('.route-open').first().innerText(),/Схема №1/);
+ assert.equal(await page.locator('.route-open').count(),1);
+ assert.match(await page.locator('.route-count').first().innerText(),/10 схем/);
  await page.locator('#search').fill('6342');
  await page.locator('.route-open').first().click();
  await page.locator('#route-modal-image').evaluate(img=>new Promise(resolve=>{if(img.complete)return resolve();img.addEventListener('load',resolve,{once:true});img.addEventListener('error',resolve,{once:true});setTimeout(resolve,9000)}));
  assert.ok(await page.locator('#route-modal-image').evaluate(img=>img.naturalWidth>0),'Картинка маршруту 6342 має завантажуватися');
  await page.keyboard.press('Escape');
  await page.locator('#search').fill('7141');
- assert.equal(await page.locator('.route-open').count(),2);
+ assert.equal(await page.locator('.route-open').count(),1);
  await page.locator('#search').fill('0541');
- assert.equal(await page.locator('.route-open').count(),5);
+ assert.equal(await page.locator('.route-open').count(),1);
  await page.goto(root+'/official-questions.html');
  assert.equal(await page.locator('iframe').count(),0,'Заблоковані PDF-фрейми видалено');
  await page.waitForFunction(()=>{const b=document.querySelector('#start');return b&&!b.disabled},{timeout:45000});
@@ -130,7 +137,13 @@ try {
   await mp.locator('#menu-toggle').click();
   assert.equal(await mp.locator('#nav-links').evaluate(e=>e.classList.contains('open')),true);
  }
- await mobile.close();
+ await mp.goto(root+'/');
+ assert.equal(await mp.locator('.feature-card').count(),6);
+ await mp.locator('#menu-toggle').click();
+ assert.equal(await mp.locator('#nav-links').evaluate(e=>e.classList.contains('open')),true);
+ await mp.locator('.nav-mobile-extra a[href="intersections.html"]').click();
+ assert.match(mp.url(),/intersections.html/);
+  await mobile.close();
  assert.deepEqual(exceptions,[]);
  console.log('PASS: 13 сторінок, навігація, маршрути, теорія, практика, чекліст, профіль, мобільні екрани, браузерні помилки');
 }finally{await browser.close()}
