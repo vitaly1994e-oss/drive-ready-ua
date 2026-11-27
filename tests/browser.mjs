@@ -141,7 +141,7 @@ try {
  assert.equal(await mp.locator('.feature-card').count(),6);
  await mp.locator('#menu-toggle').click();
  assert.equal(await mp.locator('#nav-links').evaluate(e=>e.classList.contains('open')),true);
- await mp.locator('#nav-links a[href="intersections.html"]').click();
+ await mp.locator('.nav-mobile-extra a[href="intersections.html"]').click();
  assert.match(mp.url(),/intersections.html/);
   await mobile.close();
  assert.deepEqual(exceptions,[]);
