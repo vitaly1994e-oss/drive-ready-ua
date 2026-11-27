@@ -31,7 +31,7 @@ const sourceDefault='https://hsc.gov.ua/index/poslugi/vidacha-posvidchennya-vodi
 const khSources=window.DRU_KHARKIV_SOURCES||{};
 const available=Object.keys(schemas).filter(c=>schemas[c]?.length&&byCode.has(c)).sort();
 const maxRecords=200;
-let state,activeQuestion=null,answered=false,questionIndex=0;
+let state,activeQuestion=null,answered=false,questionIndex=0,manualPoint=null;
 const id=()=>crypto?.randomUUID?.()||String(Date.now())+'-'+Math.random().toString(36).slice(2,10);
 function safeRead(){try{const raw=JSON.parse(localStorage.getItem(STORAGE)||'{}');return raw&&typeof raw==='object'?raw:{}}catch{return {}}}
 function records(){return Array.isArray(state.passports)?state.passports:[]}
@@ -56,9 +56,21 @@ function renderScheme(){
  const img=$('#r360-image'),error=$('#r360-image-error');error.classList.add('hidden');img.hidden=false;img.alt=title+' — навчальна схема';img.onerror=()=>{img.hidden=true;error.classList.remove('hidden')};img.onload=()=>{error.classList.add('hidden')};img.src=url;
  $('#r360-route-title').textContent=title;$('#r360-center-address').textContent=center[0]+' · '+center[3];
  $('#r360-source').href=khSources[code]||sourceDefault;
- const fav=favorites().includes(routeKey());$('#r360-favorite').textContent=fav?'★ Збережено':'☆ Зберегти маршрут';
+ manualPoint=null;$('#r360-mark-mode').checked=false;$('#r360-mark-status').textContent='';const fav=favorites().includes(routeKey());$('#r360-favorite').textContent=fav?'★ Збережено':'☆ Зберегти маршрут';
  const base=new URL(location.href);base.searchParams.set('center',code);base.searchParams.set('route',number);history.replaceState(null,'',base);
  renderRecords();
+}
+function renderMarkers(){
+ const root=$('#r360-markers');root.replaceChildren();
+ const items=records().filter(x=>x.routeKey===routeKey()&&x.point&&Number.isFinite(x.point.x)&&Number.isFinite(x.point.y));
+ for(const rec of items){
+  const dot=elem('button','!','r360-marker');dot.type='button';
+  dot.title=(TYPES.find(t=>t.id===rec.kind)?.name||'Помилка')+(rec.place?' · '+rec.place:'');dot.setAttribute('aria-label',dot.title);
+  dot.style.left=rec.point.x+'%';dot.style.top=rec.point.y+'%';
+  dot.onclick=e=>{e.stopPropagation();const card=document.querySelector('[data-passport="'+rec.id+'"]');card?.scrollIntoView({behavior:'smooth',block:'center'});card?.focus()};
+  root.append(dot);
+ }
+ if(manualPoint){const dot=elem('span','+','r360-marker r360-marker-new');dot.style.left=manualPoint.x+'%';dot.style.top=manualPoint.y+'%';dot.setAttribute('aria-hidden','true');root.append(dot)}
 }
 function renderRecords(){
  const all=records(),key=routeKey(),selected=all.filter(x=>x.routeKey===key).slice().reverse();
@@ -70,7 +82,7 @@ function renderRecords(){
  selected.forEach(record=>{
   const type=TYPES.find(t=>t.id===record.kind)||TYPES[0],card=elem('article',undefined,'r360-passport'),top=elem('div',undefined,'r360-passport-top');
   top.append(elem('strong',type.name),elem('span',record.status==='done'?'Відпрацьовано':'Потрібна практика',record.status==='done'?'r360-done':'r360-pending'));
-  card.append(top);
+  card.append(top);card.dataset.passport=record.id;card.tabIndex=-1;
   if(record.place)card.append(elem('p','⌖ '+record.place));
   if(record.note)card.append(elem('p',record.note));
   card.append(elem('p','Рекомендація: '+type.tip,'muted'));
@@ -81,7 +93,7 @@ function renderRecords(){
   const del=elem('button','Видалити','button');del.type='button';del.onclick=()=>{if(!confirm('Видалити запис із паспорта помилок?'))return;state.passports=records().filter(x=>x.id!==record.id);save();renderRecords()};
   actions.append(toggle,del);card.append(actions);root.append(card);
  });
- const plan=$('#r360-plan');plan.replaceChildren();
+ renderMarkers();const plan=$('#r360-plan');plan.replaceChildren();
  const pendingKinds=[...new Set(pending.filter(x=>x.routeKey===key).map(x=>x.kind))];
  if(!pendingKinds.length){plan.append(elem('p','Поточних помилок на цьому маршруті немає. Повтори базові маневри та перевір розмітку з інструктором.','muted'))}
  else pendingKinds.forEach((kind,n)=>{const type=TYPES.find(t=>t.id===kind);if(!type)return;const item=elem('div',undefined,'r360-plan-item');item.append(elem('span',String(n+1).padStart(2,'0'),'r360-plan-number'));const block=elem('div');block.append(elem('strong',type.name),elem('p',type.exercise));item.append(block);plan.append(item)});
@@ -111,7 +123,7 @@ async function importData(){
  if(file.size>2000000){message('Файл завеликий для імпорту.');return}
  let payload;try{payload=JSON.parse(await file.text())}catch{message('Невірний JSON-файл.');return}
  if(payload.schema!=='drive-ready-360'||payload.version!==1||!Array.isArray(payload.passports)){message('Це не файл експорту DRIVE READY 360°.');return}
- if(payload.passports.length>maxRecords||payload.passports.some(x=>typeof x.id!=='string'||x.id.length>100||!TYPES.some(t=>t.id===x.kind)||typeof x.routeKey!=='string'||x.routeKey.length>50||typeof x.note!=='string'||x.note.length>500||typeof x.place!=='string'||x.place.length>120||!['done','pending'].includes(x.status))){message('Файл не пройшов перевірку структури даних.');return}
+ if(payload.passports.length>maxRecords||payload.passports.some(x=>typeof x.id!=='string'||x.id.length>100||!TYPES.some(t=>t.id===x.kind)||typeof x.routeKey!=='string'||x.routeKey.length>50||typeof x.note!=='string'||x.note.length>500||typeof x.place!=='string'||x.place.length>120||(!['done','pending'].includes(x.status)||(x.point!=null&&(typeof x.point!=='object'||!Number.isFinite(x.point.x)||!Number.isFinite(x.point.y)||x.point.x<0||x.point.x>100||x.point.y<0||x.point.y>100))))){message('Файл не пройшов перевірку структури даних.');return}
  if(!confirm('Замінити поточні записи у цьому браузері даними з файлу?'))return;
  state.passports=payload.passports;state.favorites=Array.isArray(payload.favorites)?payload.favorites.filter(x=>typeof x==='string'&&x.length<60).slice(0,100):[];
  state.attempts=Array.isArray(payload.attempts)?payload.attempts.filter(x=>x&&typeof x.kind==='string'&&typeof x.correct==='boolean').slice(-100):[];
@@ -127,9 +139,22 @@ function init(){
  $('#r360-center').addEventListener('change',()=>{const u=new URL(location.href);u.searchParams.delete('route');history.replaceState(null,'',u);updateRoutes();renderQuestion()});
  $('#r360-route').addEventListener('change',()=>{renderScheme();renderQuestion()});
  $('#r360-favorite').addEventListener('click',()=>{const list=favorites(),key=routeKey();state.favorites=list.includes(key)?list.filter(x=>x!==key):[...list,key].slice(-100);save();renderScheme()});
- $('#r360-error-form').addEventListener('submit',e=>{e.preventDefault();if(records().length>=maxRecords){message('Досягнуто ліміту 200 записів. Експортуй і видали старі записи.');return}
- const item={id:id(),routeKey:routeKey(),kind:kind.value,severity:$('#r360-severity').value==='critical'?'critical':'practice',place:$('#r360-place').value.trim(),note:$('#r360-notes').value.trim(),status:'pending',date:new Date().toISOString()};
- state.passports.push(item);if(save()){message('Додано до паспорта помилок.');e.target.reset();renderRecords();renderQuestion()}});
+ $('#r360-image-canvas').addEventListener('click',e=>{
+ if(!$('#r360-mark-mode').checked)return;
+ const img=$('#r360-image');
+ if(!img.complete||!img.naturalWidth){message('Спочатку дочекайся завантаження зображення.');return}
+ const rect=img.getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width*100,y=(e.clientY-rect.top)/rect.height*100;
+ if(x<0||x>100||y<0||y>100)return;
+ manualPoint={x:Math.round(x*10)/10,y:Math.round(y*10)/10};
+ $('#r360-mark-status').textContent='Навчальну точку позначено. Заповни й збережи запис.';
+ renderMarkers()
+});
+$('#r360-mark-mode').addEventListener('change',()=>{
+ if(!$('#r360-mark-mode').checked){manualPoint=null;$('#r360-mark-status').textContent='';renderMarkers()}
+});
+$('#r360-error-form').addEventListener('submit',e=>{e.preventDefault();if(records().length>=maxRecords){message('Досягнуто ліміту 200 записів. Експортуй і видали старі записи.');return}
+ const item={id:id(),routeKey:routeKey(),kind:kind.value,severity:$('#r360-severity').value==='critical'?'critical':'practice',place:$('#r360-place').value.trim(),note:$('#r360-notes').value.trim(),status:'pending',point:manualPoint?{...manualPoint}:null,date:new Date().toISOString()};
+ state.passports.push(item);if(save()){message('Додано до паспорта помилок.');e.target.reset();manualPoint=null;$('#r360-mark-status').textContent='';renderRecords();renderQuestion()}});
  $('#r360-next').addEventListener('click',renderQuestion);
  $('#r360-export').addEventListener('click',exportData);$('#r360-print').addEventListener('click',()=>window.print());
  $('#r360-import-button').addEventListener('click',importData);
