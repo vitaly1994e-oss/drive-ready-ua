@@ -1,0 +1,92 @@
+/* DRIVE TIME / KINETIC STUDIO 2026
+   A distinctive warm driving-studio identity. All booking APIs and field IDs remain intact. */
+:root{--bg:#fff6eb;--surface:#fffefa;--panel:#fffefa;--ink:#24243c;--muted:#6d6777;--border:#efdcd0;--lime:#ff6e49;--lime-tint:#fff0e4}
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif!important;background:#fff6eb;background-image:radial-gradient(ellipse at 80% 0,#ffd8b7 0,transparent 35%),radial-gradient(ellipse at 10% 54%,#fee4d4,transparent 34%);background-attachment:fixed}
+.top{background:#fff8f2eF!important;border-bottom:1px solid #eed4c4!important}
+.top-content{min-height:80px}
+.logo-icon{transform:rotate(-8deg);background:#282339!important;color:#ffc9b7!important;border-radius:13px 13px 13px 4px;transition:transform .25s}
+.logo:hover .logo-icon{transform:rotate(0)}
+.logo-text>span,.footer-logo>span{color:#f06b4e!important}
+.header-book{background:#f56a4a!important;color:#fff!important;border:1px solid #f56a4a!important;box-shadow:0 6px 0 #ad3c2630}
+.header-book:hover{background:#d84b36!important}
+.header-book span{color:#fff!important}
+.theme-switch{border-radius:13px!important}
+.hero{position:relative;isolation:isolate;overflow:hidden;margin-top:22px;padding:clamp(25px,5vw,60px);
+ border-radius:34px;background:#282338!important;color:#fff!important;
+ box-shadow:0 25px 55px #34273c30;min-height:470px}
+.hero:before{content:"";position:absolute;right:-120px;top:-190px;width:540px;height:540px;border-radius:50%;background:#ff7653;opacity:.22;filter:blur(20px);z-index:-1}
+.hero:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,transparent 0 135px,#ffffff05 135px 136px);pointer-events:none;z-index:-1}
+.hero h1{color:#fff!important;font-weight:950!important;letter-spacing:-.075em!important;line-height:1.02!important}
+.hero h1 em{color:#ffad8d!important;font-style:normal!important;text-decoration:underline;text-decoration-color:#ff6b4a;text-underline-offset:10px}
+.hero .hero-desc{color:#e5dbe7!important}
+.hero .eyebrow{color:#ffbd9b!important}
+.hero .hero-trust{color:#f5e4e4!important}
+.hero-foot{border-top:1px solid #ffffff44!important}
+.hero-foot strong{color:#fff!important}
+.hero-foot small{color:#f2d6d6!important}
+.hero-primary,.primary-btn{background:#ff7351!important;border-color:#ff7351!important;color:#24202c!important;box-shadow:0 7px 0 #c84b3340!important;transition:transform .25s ease,box-shadow .25s ease}
+.hero-primary:hover,.primary-btn:hover{transform:translateY(-3px);box-shadow:0 10px 20px #e56e573c!important}
+.hero-primary:active,.primary-btn:active{transform:translateY(1px)}
+.hero-visual{background:linear-gradient(135deg,#f8c9ad,#ff9474 58%,#f87354)!important;transform:rotate(3deg);border:4px solid #fff2!important;border-radius:29px!important;box-shadow:0 32px 65px #120e1d5c;transition:transform .55s ease}
+.hero-visual:hover{transform:rotate(0deg) translateY(-4px)}
+.hero-accent-word{color:#fff5!important;letter-spacing:-.1em}
+.hero-road{opacity:.65}
+.hero-visual-inner{background:#292438d9!important;border:1px solid #ffffff36!important;backdrop-filter:blur(12px)}
+.hero-visual-inner strong{color:#fff!important}
+.hero-visual-inner span,.hero-visual-inner .visual-stamp{color:#ffe4d9!important}
+.hero-visual-dot{background:#ff7351!important;color:#252238!important;animation:timePulse 3s ease-in-out infinite}
+.drive-flag{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:100px;background:#ffffff20;border:1px solid #ffffff3d;color:#fff;font-size:11px;font-weight:750;margin-bottom:15px}
+.drive-flag span{display:inline-block;width:21px;height:14px;border-radius:2px;background:linear-gradient(#2686e5 50%,#ffe35d 50%)}
+.booking-wrap{background:transparent!important}
+.booking-heading h2{letter-spacing:-.07em!important}
+.booking-heading h2 em{color:#f46b4f!important;font-style:normal!important}
+.booking-heading-badge{background:#ffe8d7!important;border-color:#ffba96!important;color:#b44e37!important}
+.panel,.aside-card{background:#fffdf9!important;border:1px solid #ebd6ca!important;border-radius:23px!important;box-shadow:0 12px 38px #5e354015}
+.step-number{background:#282339!important;color:#ffe3d6!important;border-radius:14px 14px 14px 5px!important}
+.step-head h3{color:#2b2639}
+.calendar-header strong{font-weight:850}
+.date-button,.time-button{border-radius:13px!important;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.date-button:hover:not(:disabled),.time-button:hover:not(:disabled){transform:translateY(-3px);border-color:#fa8d6d!important;box-shadow:0 8px 15px #f8815a22}
+.date-button.selected,.time-button.selected,.time-button[aria-pressed=true],.date-button[aria-pressed=true]{background:#fff0e7!important;border-color:#e96a4c!important;color:#422d34!important;box-shadow:inset 0 0 0 1px #f07b5a}
+.date-button.selected strong,.time-button.selected strong{color:#2b273c!important}
+.range-choice,.chosen{background:#fff2e7!important;border:1px solid #f7c4aa!important;border-radius:17px!important}
+.chosen-symbol,.booking-policy-icon{background:#ffd2bd!important;color:#9a3d2e!important;border-color:#f4aa8a!important}
+.booking-policy,.booking-policy-consent,.confirmation-policy{background:linear-gradient(135deg,#fff1e5,#fff9ef)!important;border:1px solid #f1c6ad!important;border-radius:18px!important}
+.booking-policy strong,.confirmation-policy strong{color:#50303b!important}
+.booking-policy p,.confirmation-policy p{color:#694e51!important}
+.booking-details input:not([type=checkbox]),.booking-details textarea,.manage-panel input,.admin-login input{background:#fffaf6!important;border:1px solid #e9d5c8!important;border-radius:13px!important;color:#332939!important}
+.booking-details input:focus,.booking-details textarea:focus,.manage-panel input:focus{border-color:#ea8a6b!important;box-shadow:0 0 0 3px #ffd8c5!important}
+.booking-details input::placeholder,.booking-details textarea::placeholder{color:#897b80!important}
+.cross-promo{background:#241f38!important;color:#fff!important}
+.cross-promo-copy h2,.cross-promo-copy p{color:#fff!important}
+.cross-promo-copy em{color:#ffa98c!important}
+.cross-promo-art{border-radius:25px!important}
+.promo-side{background:linear-gradient(130deg,#332541,#472a49)!important;border-radius:23px!important}
+.promo-side-action,.promo-big-button{background:#ffbd78!important;color:#292139!important;border-radius:12px!important}
+.footer{background:#282338!important;color:#fff!important;border-top-color:#332f47!important}
+.footer a,.footer p,.footer span{color:#e9e0e9}
+.footer-logo{color:#fff!important}
+.manage-intro h1{letter-spacing:-.07em}
+.manage-intro h1 em{color:#ef684c!important}
+.manage-ticket{border:1px solid #eed9cf!important;border-radius:18px!important;background:#fff8f2!important}
+.manage-chip{background:#ffe0ce!important;color:#a33f30!important}
+.admin-hero{border-radius:23px}
+html[data-theme=dark]{--bg:#171321;--surface:#282238;--panel:#282238;--ink:#f7eef3;--muted:#c8b9c6;--border:#4e3e55;--lime:#ff9a77;--lime-tint:#3a2b3f;background:#171321}
+html[data-theme=dark] body{background:#171321!important;background-image:radial-gradient(ellipse at 85% 0,#672b4355,transparent 39%)!important;color:#f7eef3!important}
+html[data-theme=dark] .top{background:#1b1726f2!important;border-color:#4b394e!important}
+html[data-theme=dark] .panel,html[data-theme=dark] .aside-card,html[data-theme=dark] .calendar,html[data-theme=dark] .booking-details,html[data-theme=dark] .manage-panel,html[data-theme=dark] .admin-login{background:#282238!important;border-color:#554259!important}
+html[data-theme=dark] .booking-wrap,html[data-theme=dark] .manage-main,html[data-theme=dark] .admin-wrap{background:#171321!important}
+html[data-theme=dark] .range-choice,html[data-theme=dark] .chosen,html[data-theme=dark] .booking-policy,html[data-theme=dark] .booking-policy-consent,html[data-theme=dark] .confirmation-policy,html[data-theme=dark] .manage-policy{background:#392b40!important;border-color:#704d59!important}
+html[data-theme=dark] .date-button,html[data-theme=dark] .time-button,html[data-theme=dark] .manage-ticket,html[data-theme=dark] .range-pill,html[data-theme=dark] .empty-time{background:#342b43!important;border-color:#65506a!important;color:#f9eaf4!important}
+html[data-theme=dark] .date-button.selected,html[data-theme=dark] .time-button.selected,html[data-theme=dark] .date-button[aria-pressed=true],html[data-theme=dark] .time-button[aria-pressed=true]{background:#674053!important;border-color:#ff9f7b!important;color:#fff!important}
+html[data-theme=dark] .booking-details input:not([type=checkbox]),html[data-theme=dark] .booking-details textarea,html[data-theme=dark] .manage-panel input,html[data-theme=dark] .admin-login input{background:#332a41!important;border-color:#745b6b!important;color:#fff!important}
+html[data-theme=dark] .primary-btn,html[data-theme=dark] .header-book{background:#ffa17d!important;border-color:#ffa17d!important;color:#291e2d!important}
+html[data-theme=dark] .footer,html[data-theme=dark] .cross-promo{background:#100e19!important}
+html[data-theme=dark] .theme-switch{background:#332840!important;border-color:#6b536e!important;color:#fff!important}
+html[data-theme=dark] .booking-policy strong,html[data-theme=dark] .booking-policy p,html[data-theme=dark] .confirmation-policy strong,html[data-theme=dark] .confirmation-policy p{color:#f5e4eb!important}
+html[data-theme=dark] .booking-heading h2 em{color:#ffa17d!important}
+html[data-theme=dark] .logo-text>span{color:#ff9b7d!important}
+@keyframes timePulse{50%{transform:translateY(-6px) rotate(8deg)}}
+@media(max-width:850px){.hero{margin-top:12px;padding:26px 20px;min-height:0}.hero-visual{transform:none}.top-content{gap:8px}}
+@media(max-width:640px){.hero{border-radius:24px;padding:25px 16px}.hero h1{font-size:clamp(40px,9vw,62px)}.hero-visual{max-height:365px}.drive-flag{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.hero-visual,.date-button,.time-button,.primary-btn,.hero-visual-dot{animation:none!important;transition:none!important}}
