@@ -18,7 +18,7 @@ test('Two simultaneous students cannot reserve the same lesson',async()=>{
  assert.ok(ends.body.ends.some(x=>x.time==='08:00'&&x.durationMinutes===120));
  assert.ok(ends.body.ends.some(x=>x.time==='21:00'&&x.durationMinutes===900));
 
- const submission={date,time:selected.time,durationMinutes:180,name:'Тестовий учень',phone,note:'Лише автоматичний тест',website:''};
+ const submission={date,time:selected.time,durationMinutes:180,name:'Тестовий учень',phone,note:'Лише автоматичний тест',website:'',policyAccepted:true};
  const responses=await Promise.all([req('/api/book',json('POST',submission)),req('/api/book',json('POST',submission))]);
  assert.deepEqual(responses.map(r=>r.status).sort(),[201,409]);
  assert.equal(responses.find(r=>r.status===201).body.duration,180);

@@ -121,10 +121,11 @@ $('#booking-form').addEventListener('submit',async e=>{
  const name=$('#student-name').value.trim(),phone=$('#student-phone').value.trim();
  if(name.length<2)return error('Вкажи ім’я (принаймні 2 символи).');
  if(!/^\+?[0-9()\-\s]{7,24}$/.test(phone))return error('Вкажи коректний номер телефону.');
+ if(!$('#policy-accepted').checked)return error('Підтвердь, що ознайомився(-лася) з правилом повідомлення за 24 години.');
  if(!$('#consent').checked)return error('Підтвердь згоду на використання контактів.');
  state.busy=true;chosen();
  try{
-  const receipt=await api('/api/book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,note:$('#student-note').value.trim(),website:$('#website').value,date:state.date,time:state.start,durationMinutes:state.durationMinutes})});
+  const receipt=await api('/api/book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,note:$('#student-note').value.trim(),website:$('#website').value,date:state.date,time:state.start,durationMinutes:state.durationMinutes,policyAccepted:$('#policy-accepted').checked})});
   state.receipt=receipt;$('#confirm-date').textContent=human(receipt.date);
   $('#confirm-time').textContent=receipt.time+'—'+hm(toMinutes(receipt.time)+receipt.duration)+' · '+durationShort(receipt.duration);
   $('#confirm-code').textContent=receipt.code;setupCalendarLinks(receipt);
@@ -133,7 +134,7 @@ $('#booking-form').addEventListener('submit',async e=>{
  }catch(e){error(e.message);if(e.status===409){resetSelection();await fetchDates()}}
  finally{state.busy=false;chosen()}
 });
-const reminderText=r=>'Заняття з водіння DRIVE TIME: '+human(r.date)+', '+r.time+'–'+hm(toMinutes(r.time)+r.duration)+' (Київ). Код: '+r.code+'. Візьми документи та приходь завчасно.';
+const reminderText=r=>'Заняття з водіння DRIVE TIME: '+human(r.date)+', '+r.time+'–'+hm(toMinutes(r.time)+r.duration)+' (Київ). Код: '+r.code+'. Візьми документи та приходь завчасно. Для перенесення або скасування потрібно повідомити інструктора щонайменше за 24 години; якщо залишилось менше доби, узгодь зміни особисто.';
 const googleDate=r=>r.date.replaceAll('-','')+'T'+r.time.replace(':','')+'00';
 const googleEnd=r=>r.date.replaceAll('-','')+'T'+hm(toMinutes(r.time)+r.duration).replace(':','')+'00';
 function setupCalendarLinks(r){

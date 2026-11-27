@@ -43,3 +43,5 @@ test('Pupil chooses start and end directly in the calendar, and advert is visibl
  assert.ok(server.includes('pg_advisory_xact_lock'));
  assert.ok(css.includes('.range-choice')&&css.includes('.end-time-panel')&&css.includes('.promo-side')&&css.includes('.cross-promo'));
 });
+
+test('24-hour rescheduling rule visible before and after booking',()=>{const html=get('public/index.html');const js=get('public/app.js');const server=get('server.js');assert.ok(html.includes('id="policy-accepted"'));assert.ok(html.includes('confirmation-policy'));assert.ok(js.includes('policyAccepted'));assert.ok(server.includes('policy_24h_accepted_at'));});

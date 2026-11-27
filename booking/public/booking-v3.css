@@ -126,3 +126,13 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,
 .promo-side-action span{font-size:18px}
 @media(max-width:850px){.promo-side{min-height:0;grid-column:1/-1;gap:12px}.booking-aside{grid-template-columns:1fr 1fr}}
 @media(max-width:640px){.booking-aside{grid-template-columns:1fr}.promo-side{min-height:0;padding:20px}.promo-side-brand strong{font-size:28px}.promo-side-heading{font-size:25px}}
+
+/* Booking conditions — clear notice visible before final submission. */
+.booking-policy{display:flex;align-items:flex-start;gap:14px;border:1px solid #d8e7bf;background:linear-gradient(125deg,#f0f8e4,#fffdf4);padding:18px 19px;border-radius:15px;margin:17px 0 15px}
+.booking-policy-icon{width:46px;height:46px;flex:none;display:grid;place-items:center;color:#254528;border-radius:14px;border:1px solid #bfda9c;background:#dff0c6;font-size:22px;font-weight:900;letter-spacing:-.05em}
+.booking-policy>div:last-child{flex:1;min-width:0}.booking-policy strong{display:block;font-size:14px;line-height:1.5;color:#24432d;letter-spacing:-.02em}.booking-policy p{font-size:12px;line-height:1.75;color:#5b7459;margin:6px 0 0}
+.booking-policy-consent{font-size:12px!important;color:#365b3a!important;background:#f5faf0;border:1px solid #e2efda;border-radius:12px;padding:12px 14px;margin-bottom:12px!important}
+.confirmation-policy{display:flex;text-align:left;align-items:flex-start;gap:12px;background:#f0f7e9;border:1px solid #d8e7cd;border-radius:13px;padding:15px 17px;margin:18px 0}
+.confirmation-policy>span{font-size:24px;color:#4c8745;flex:none;line-height:1.4}
+.confirmation-policy p{margin:0!important;color:#547353!important;font-size:12px!important;line-height:1.75!important}.confirmation-policy strong{color:#24482c}
+@media(max-width:640px){.booking-policy{padding:13px;gap:10px;margin:12px 0}.booking-policy-icon{width:38px;height:38px;font-size:19px;border-radius:11px}.booking-policy strong{font-size:13px}.booking-policy p{font-size:11px}.booking-policy-consent{padding:10px 12px}.confirmation-policy{padding:12px;gap:8px}}

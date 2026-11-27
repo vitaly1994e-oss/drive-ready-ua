@@ -71,6 +71,7 @@ async function init(){const c=await pool.connect();try{await c.query('BEGIN');
  await c.query('ALTER TABLE booking_blocks ADD COLUMN IF NOT EXISTS duration_min integer NOT NULL DEFAULT 60');
  await c.query(`CREATE TABLE IF NOT EXISTS booking_appointments(id bigserial PRIMARY KEY,day date NOT NULL,start_min integer NOT NULL,duration_min integer NOT NULL DEFAULT 60,student_name varchar(80) NOT NULL,phone varchar(30) NOT NULL,note varchar(300) NOT NULL DEFAULT '',code varchar(36) NOT NULL UNIQUE,status varchar(16) NOT NULL DEFAULT 'confirmed',created_at timestamptz DEFAULT now(),CHECK(status IN('confirmed','cancelled')))`);
  await c.query('ALTER TABLE booking_appointments ADD COLUMN IF NOT EXISTS duration_min integer NOT NULL DEFAULT 60');
+ await c.query('ALTER TABLE booking_appointments ADD COLUMN IF NOT EXISTS policy_24h_accepted_at timestamptz');
  await c.query("CREATE UNIQUE INDEX IF NOT EXISTS uq_active_appointment ON booking_appointments(day,start_min) WHERE status='confirmed'");
  await c.query('COMMIT');console.log('Booking database ready')
  }catch(e){await c.query('ROLLBACK');throw e}finally{c.release()}}
@@ -104,13 +105,14 @@ app.post('/api/book',async(req,res)=>{
  if(req.body.website)return errs(res,400,'Заявку відхилено');
  const name=txt(req.body.name,80),phone=txt(req.body.phone,30),note=txt(req.body.note,300),date=txt(req.body.date,10),start=m(req.body.time),duration=bookingDuration(req.body.durationMinutes??60);
  if(name.length<2||name.length>80||!/^\+?[0-9()\-\s]{7,24}$/.test(phone)||!validateDate(date)||start===null||duration===null)return errs(res,400,'Перевір дату, ім’я та телефон');
+ if(req.body.policyAccepted!==true)return errs(res,400,'Потрібне підтвердження правила перенесення або скасування за 24 години');
  const c=await pool.connect();
  try{await c.query('BEGIN');await lockDay(c,date);
  const daySlots=await slots(date,c,duration),picked=daySlots.find(x=>m(x.time)===start);
  if(!picked){await c.query('ROLLBACK');return errs(res,400,'Такий час не доступний у графіку')}
  if(picked.status!=='free'){await c.query('ROLLBACK');return errs(res,409,'Цей час уже зайнятий. Обери інший')}
  const code=crypto.randomBytes(5).toString('hex').toUpperCase();
- const r=await c.query("INSERT INTO booking_appointments(day,start_min,duration_min,student_name,phone,note,code,status) VALUES($1,$2,$3,$4,$5,$6,$7,'confirmed') RETURNING id",[date,start,duration,name,phone,note,code]);
+ const r=await c.query("INSERT INTO booking_appointments(day,start_min,duration_min,student_name,phone,note,code,status,policy_24h_accepted_at) VALUES($1,$2,$3,$4,$5,$6,$7,'confirmed',now()) RETURNING id",[date,start,duration,name,phone,note,code]);
  await c.query('COMMIT');res.status(201).json({ok:true,code,id:String(r.rows[0].id),date,time:hhmm(start),duration,timezone:TIME_ZONE})
  }catch(e){await c.query('ROLLBACK').catch(()=>{});console.error('book failed',e.code||e.message);errs(res,e.code==='23505'?409:503,e.code==='23505'?'Цей час уже зайнятий':'Не вдалося підтвердити запис')}finally{c.release()}
 });
