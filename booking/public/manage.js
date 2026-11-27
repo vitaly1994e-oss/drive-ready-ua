@@ -13,9 +13,10 @@ $('#lookup-form').addEventListener('submit',async e=>{
   if(!response.ok)throw new Error(data.error||'Не вдалося завантажити розклад');
   list.replaceChildren();
   if(!data.lessons.length)list.append(el('div','За цим номером немає майбутніх занять. Перевір номер або звернись до інструктора.','empty-time'));
-  for(const lesson of data.lessons){
+  $('#lessons-summary').textContent=data.lessons.length?'Знайдено занять: '+data.lessons.length+'. Найближче заняття — перше у списку.':'';
+  for(const [index,lesson] of data.lessons.entries()){
    const item=el('article',undefined,'manage-ticket');
-   item.append(el('span','Підтверджено','manage-chip'),el('h2',human(lesson.date)),el('strong',lesson.time+'–'+lesson.end),el('small','Тривалість: '+lesson.duration+' хв'));
+   item.append(el('span',index===0?'Найближче заняття':'Підтверджено','manage-chip'),el('h2',human(lesson.date)),el('strong',lesson.time+'–'+lesson.end),el('small','Тривалість: '+lesson.duration+' хв'));
    list.append(item);
   }
   $('#booking-details-panel').classList.remove('hidden');
