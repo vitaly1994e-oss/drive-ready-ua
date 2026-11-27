@@ -4,7 +4,7 @@
  * Список campaigns заповнюється лише після перевірки та погодження матеріалів.
  */
 window.DRU_AD_CONFIG={
-  receiverEmail:"",
+  receiverEmail:"vitaly1994e@gmail.com",
   submissionEndpoint:"",
   campaigns:[]
 };
