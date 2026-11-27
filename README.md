@@ -2,6 +2,18 @@
 
 Незалежна україномовна освітня платформа: https://drive-ready-ua.onrender.com/
 
+## Безкоштовна підготовка до іспиту з водіння в Україні
+
+**[DRIVE READY UA — почати навчання](https://drive-ready-ua.onrender.com/)**
+
+Без оплати та підписки: [тести ПДР](https://drive-ready-ua.onrender.com/quiz.html), [практичні ситуації](https://drive-ready-ua.onrender.com/practice.html), [пробний іспит](https://drive-ready-ua.onrender.com/coach.html), [чекліст](https://drive-ready-ua.onrender.com/exam-checklist.html), [маршрути практичного іспиту МВС](https://drive-ready-ua.onrender.com/routes.html).
+
+Каталог охоплює 73 записи територіальних сервісних центрів і **22 сторінки областей/Києва** з перевіреними схемами частини маршрутів. Схеми публікуються в контексті навчання, з позначенням джерела. Вони не гарантують прийом іспиту в конкретному ТСЦ.
+
+**Популярні регіони:** [Харків](https://drive-ready-ua.onrender.com/regions/kharkiv.html) · [Київ](https://drive-ready-ua.onrender.com/regions/kyiv-city.html) · [Київська область](https://drive-ready-ua.onrender.com/regions/kyiv-oblast.html) · [Одеса](https://drive-ready-ua.onrender.com/regions/odesa.html) · [Львів](https://drive-ready-ua.onrender.com/regions/lviv.html) · [Дніпро](https://drive-ready-ua.onrender.com/regions/dnipro.html).
+
+Маєш посилання на нові офіційні схеми? Відкрий issue з номером ТСЦ і джерелом, щоб ми могли перевірити та додати їх без вигадування геометрії.
+
 ## Що реально працює
 - Адаптивна головна сторінка, темна/світла тема та мобільне меню
 - Пошук серед понад 70 записів ТСЦ МВС за областю, містом, номером
