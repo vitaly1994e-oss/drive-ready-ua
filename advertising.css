@@ -1,0 +1,72 @@
+/* Drive Ready UA — advertising experience */
+.ads-page{--ads-glow:rgba(185,245,108,.13)}
+.ads-hero{position:relative;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:48px;align-items:center;padding:92px 0 64px}
+.ads-hero h1{font-size:clamp(43px,5.3vw,71px);font-weight:870;letter-spacing:-.07em;line-height:1.13;margin:20px 0 25px}
+.ads-hero h1 span{color:var(--accent)}.ads-hero .lead{font-size:17px;line-height:1.85}
+.ads-hero .actions{margin-top:28px}.ads-subnote{font-size:12px;color:var(--muted);margin:20px 0 0}
+.ads-hero-visual{position:relative;display:grid;place-items:center;min-height:430px;border:1px solid var(--line);border-radius:27px;overflow:hidden;background:radial-gradient(ellipse at 80% 10%,#284f3f 0%,#142a30 50%,#0f1d25 100%)}
+.ads-hero-visual:before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:37px 37px;transform:rotate(-8deg) scale(1.2)}
+.ad-preview-shell{position:relative;width:82%;max-width:370px;background:#142733;border:1px solid #3a5954;border-radius:19px;overflow:hidden;box-shadow:0 25px 75px rgba(0,0,0,.45);transform:rotate(3deg)}
+.ad-preview-head{display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:800;letter-spacing:.05em;color:#b9f56c;padding:16px;border-bottom:1px solid #344d52}
+.ad-preview-head span:last-child{color:#afc7ca;font-size:9px}
+.ad-preview-map{display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;height:158px;color:#dfffd3;background:repeating-linear-gradient(45deg,#253f41 0 14px,#1f3439 14px 28px)}
+.ad-preview-map span:first-child{font-size:54px}.ad-preview-map span:last-child{font-size:10px;font-weight:700;background:#10252a;padding:7px 14px;border-radius:12px}
+.ad-preview-card{background:#edf8e8;color:#203c2b;margin:14px;padding:16px;border-radius:13px;display:grid;gap:5px}
+.ad-preview-card small{color:#526e52;font-size:9px;letter-spacing:.1em;font-weight:800}.ad-preview-card b{font-size:21px;letter-spacing:-.03em}.ad-preview-card p{font-size:11px;margin:0}.ad-preview-card>span{font-size:12px;font-weight:850;color:#285d2d;margin-top:5px}
+.ads-benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:var(--panel);border:1px solid var(--line);border-radius:21px;margin:8px 0 20px;padding:22px}
+.ads-benefits>div{display:grid;gap:5px;padding:7px 24px;border-right:1px solid var(--line)}.ads-benefits>div:last-child{border-right:none}
+.ads-benefits strong{font-size:15px;letter-spacing:-.02em}.ads-benefits span{font-size:12px;color:var(--muted);line-height:1.6}
+.ads-pricing-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.ads-price-card{display:flex;flex-direction:column;min-height:455px;padding:31px;position:relative}
+.ads-price-card h3{font-size:24px;letter-spacing:-.045em;line-height:1.2;margin:25px 0 12px}
+.ads-price-card p{font-size:14px;color:var(--muted);line-height:1.8;margin:0 0 18px}
+.ads-plan-tag{font-size:11px;letter-spacing:.12em;font-weight:800;color:var(--muted)}
+.ads-price{display:grid;gap:0;margin:0 0 19px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.ads-price strong{font-size:33px;font-weight:870;letter-spacing:-.055em;color:var(--ink)}
+.ads-price span{color:var(--muted);font-size:11px}
+.ads-price-card ul{padding-left:18px;display:grid;gap:8px;color:var(--muted);font-size:13px}
+.ads-price-card ul li::marker{color:var(--accent)}
+.ads-select{width:100%;margin-top:auto}
+.ads-price-featured{border-color:color-mix(in srgb,var(--accent) 55%,var(--line));background:radial-gradient(circle at 92% 0,rgba(185,245,108,.16),transparent 60%),var(--panel)}
+.ads-recommended{position:absolute;right:18px;top:17px;border-radius:99px;background:var(--accent);color:var(--bg);padding:4px 10px;font-size:10px;font-weight:800}
+.ads-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.ads-steps>div{padding:27px;background:var(--panel);border:1px solid var(--line);border-radius:18px}
+.ads-steps b{color:var(--accent);font-size:25px;letter-spacing:-.04em}
+.ads-steps h3{font-size:18px;margin:20px 0 8px}
+.ads-steps p{color:var(--muted);font-size:13px;line-height:1.75;margin:0}
+.ads-request-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(255px,.7fr);gap:23px}
+.ads-request-panel{padding:34px}
+.ads-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.ads-request-panel label:not(.ads-consent){display:block;font-size:13px;font-weight:740;color:var(--ink);margin:0 0 15px}
+.ads-request-panel label>span:not(.ads-consent span){color:var(--accent)}
+.ads-request-panel .field{display:block;width:100%;margin-top:9px;background:var(--surface-soft)}
+.ads-request-panel textarea{resize:vertical}
+.ads-consent{display:flex;gap:12px;align-items:start;margin:9px 0 19px;font-size:12px;color:var(--muted);line-height:1.7}
+.ads-consent input{flex:none;accent-color:#b9f56c;width:18px;height:18px;margin-top:2px}
+.ads-form-submit{min-width:220px}
+.ads-form-info{font-size:12px;line-height:1.7;color:var(--muted);margin:16px 0 0}
+.ads-request-result{background:var(--surface-soft);border:1px solid var(--accent);border-radius:15px;padding:21px;margin-top:22px}
+.ads-request-result h3{margin:0 0 10px}.ads-request-result .actions{gap:8px}.ads-request-result .muted{font-size:12px;line-height:1.75}
+.ads-aside{display:grid;align-content:start;gap:17px}.ads-aside .panel{padding:25px}.ads-aside h3{font-size:22px;line-height:1.3;margin:14px 0}
+.ads-aside p{font-size:14px;color:var(--muted);line-height:1.8}
+.ads-rule{height:1px;background:var(--line);margin:20px 0}
+.ads-faq{padding-top:30px}.ads-faq details{border-bottom:1px solid var(--line);padding:19px 0}
+.ads-faq summary{font-size:17px;font-weight:750;cursor:pointer;list-style:none;padding-right:25px;position:relative}
+.ads-faq summary:after{content:"+";position:absolute;right:4px;top:-3px;color:var(--accent);font-size:24px}
+.ads-faq details[open] summary:after{content:"−"}
+.ads-faq details p{max-width:680px;color:var(--muted);font-size:14px;line-height:1.8}
+/* Native approved campaigns: no unreviewed content */
+.ad-placement{margin:20px 0 28px}
+.ad-placement-card{display:flex;gap:19px;align-items:center;background:linear-gradient(110deg,var(--panel),var(--surface-soft));border:1px solid var(--line);border-radius:18px;padding:22px 25px}
+.ad-placement-card .ad-label{display:inline-block;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);font-weight:850;margin-bottom:8px}
+.ad-placement-card h3{margin:0 0 7px;font-size:21px;font-weight:800;line-height:1.2;letter-spacing:-.035em}
+.ad-placement-card p{font-size:13px;line-height:1.65;color:var(--muted);margin:0}
+.ad-placement-card .ad-placement-media{width:75px;height:75px;flex:none;border-radius:14px;display:grid;place-items:center;background:var(--panel2);font-size:30px;overflow:hidden}
+.ad-placement-card .ad-placement-media img{width:100%;height:100%;object-fit:cover}
+.ad-placement-card .ad-placement-info{flex:1;min-width:0}
+.ad-placement-card .button{flex:none}
+.ad-placement-card.ad-house{border-color:color-mix(in srgb,var(--accent) 25%,var(--line))}
+@media(max-width:980px){.ads-hero{gap:24px}.ads-pricing-grid{grid-template-columns:1fr 1fr}.ads-price-card:last-child{grid-column:1/-1;min-height:0}.ads-request-grid{grid-template-columns:1fr}.ads-aside{grid-template-columns:1fr 1fr}}
+@media(max-width:720px){.ads-hero{grid-template-columns:1fr;padding:50px 0 40px}.ads-hero h1{font-size:clamp(40px,9vw,55px)}.ads-hero-visual{min-height:340px}.ads-benefits{grid-template-columns:1fr}.ads-benefits>div{border-right:0;border-bottom:1px solid var(--line);padding:12px 7px}.ads-benefits>div:last-child{border:0}.ads-pricing-grid,.ads-steps,.ads-aside{grid-template-columns:1fr}.ads-price-card:last-child{grid-column:auto}.ads-price-card{min-height:0}.ads-form-grid{grid-template-columns:1fr;gap:0}.ads-request-panel{padding:23px}.ad-placement-card{align-items:flex-start;flex-wrap:wrap}.ad-placement-card .button{width:100%}.ad-placement-card .ad-placement-media{width:60px;height:60px}}
+@media(prefers-reduced-motion:reduce){.ads-page *{scroll-behavior:auto}}
+@media print{.ads-request-panel button,.ads-select,.ads-form-submit{display:none}}
