@@ -115,11 +115,29 @@ app.post('/api/book',async(req,res)=>{
  if(picked.status!=='free'){await c.query('ROLLBACK');return errs(res,409,'Цей час уже зайнятий. Обери інший')}
  const code=crypto.randomBytes(5).toString('hex').toUpperCase();
  const r=await c.query("INSERT INTO booking_appointments(day,start_min,duration_min,student_name,phone,note,code,status,policy_24h_accepted_at) VALUES($1,$2,$3,$4,$5,$6,$7,'confirmed',now()) RETURNING id",[date,start,duration,name,phone,note,code]);
- await c.query('COMMIT');res.status(201).json({ok:true,code,id:String(r.rows[0].id),date,time:hhmm(start),duration,timezone:TIME_ZONE})
+ await c.query('COMMIT');res.status(201).json({ok:true,date,time:hhmm(start),duration,timezone:TIME_ZONE})
  }catch(e){await c.query('ROLLBACK').catch(()=>{});console.error('book failed',e.code||e.message);errs(res,e.code==='23505'?409:503,e.code==='23505'?'Цей час уже зайнятий':'Не вдалося підтвердити запис')}finally{c.release()}
 });
 
 const phoneDigits=v=>String(v||'').replace(/\D/g,'');
+const studentPhoneKey=v=>{
+ const digits=String(v||'').replace(/\D/g,'');
+ if(/^380\d{9}$/.test(digits)||/^0\d{9}$/.test(digits)||/^\d{9}$/.test(digits))return digits.slice(-9);
+ return null;
+};
+app.post('/api/my-lessons',async(req,res)=>{
+ if(limit('phone-lookup:'+req.ip,8,3600000))return errs(res,429,'Забагато перевірок. Спробуй через годину');
+ const key=studentPhoneKey(req.body?.phone);
+ if(!key)return errs(res,400,'Вкажи український номер телефону, наприклад +380 67 123 45 67');
+ try{
+  const today=nowKyiv().date;
+  const r=await pool.query("SELECT to_char(day,'YYYY-MM-DD') AS day,start_min,duration_min FROM booking_appointments WHERE status='confirmed' AND day BETWEEN $1::date AND ($1::date + interval '60 days') AND right(regexp_replace(phone,'[^0-9]','','g'),9)=$2 ORDER BY day,start_min LIMIT 80",[today,key]);
+  // Phone-only lookup is intentionally read-only: never return names, private notes, reference codes or database IDs.
+  res.set('Cache-Control','no-store');
+  res.json({lessons:r.rows.map(x=>({date:x.day,time:hhmm(x.start_min),end:hhmm(x.start_min+x.duration_min),duration:x.duration_min})),notice:'Для перенесення або скасування повідом інструктора щонайменше за 24 години'});
+ }catch(e){console.error('student lookup failed',e.message);errs(res,503,'Не вдалося завантажити заняття')}
+});
+
 const validManage=body=>/^[A-F0-9]{10}$/.test(String(body?.code||'').toUpperCase())&&phoneDigits(body?.phone).length>=9&&phoneDigits(body?.phone).length<=15;
 const kyivOffsetMinutes=(date)=>{const p=new Intl.DateTimeFormat('en-US',{timeZone:TIME_ZONE,timeZoneName:'shortOffset'}).formatToParts(new Date(date+'T12:00:00Z')).find(x=>x.type==='timeZoneName')?.value||'GMT+2';const z=/GMT([+-])(\d{1,2})(?::(\d{2}))?/.exec(p);return z?(z[1]==='-'?-1:1)*(Number(z[2])*60+Number(z[3]||0)):120};
 const startsAtMillis=(day,start)=>Date.parse(day+'T00:00:00Z')+start*60000-kyivOffsetMinutes(day)*60000;

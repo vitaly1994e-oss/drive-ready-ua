@@ -55,28 +55,32 @@ test('Two simultaneous students cannot reserve the same lesson',async()=>{
  const exportCsv=await fetch(base+'/api/admin/export',{headers:{Cookie:cookie}});assert.equal(exportCsv.status,200);assert.match(exportCsv.headers.get('content-type'),/text\/csv/);
 });
 
-test('Student manages booking by reference and phone; move does not lose old slot',async()=>{
+test('Students see their scheduled lessons using phone alone; no codes or names disclosed',async()=>{
  const info=await req('/api/info');const d1=dateAdd(info.body.today,4),d2=dateAdd(info.body.today,5);
- const b={date:d1,time:'06:00',durationMinutes:120,name:'Student Portal Test',phone,note:'Integration',website:'',policyAccepted:true};
- const create=await req('/api/book',json('POST',b));assert.equal(create.status,201);
- const code=create.body.code,access={code,phone};
- const wrong=await req('/api/manage/lookup',json('POST',{code,phone:'+380999999999'}));assert.equal(wrong.status,404);
- const lookup=await req('/api/manage/lookup',json('POST',access));
- assert.equal(lookup.status,200);assert.equal(lookup.body.booking.canChange,true);
- assert.equal(lookup.body.booking.duration,120);
- const conflict=await req('/api/manage/reschedule',json('POST',{...access,date:d2,time:'02:00',durationMinutes:60}));assert.equal(conflict.status,409);
- const still=await req('/api/manage/lookup',json('POST',access));assert.equal(still.body.booking.date,d1);
- const move=await req('/api/manage/reschedule',json('POST',{...access,date:d2,time:'09:00',durationMinutes:180}));assert.equal(move.status,200);
- const updated=await req('/api/manage/lookup',json('POST',access));assert.equal(updated.body.booking.date,d2);assert.equal(updated.body.booking.duration,180);
- const freeOld=await req('/api/slots?date='+d1);assert.equal(freeOld.body.slots.find(x=>x.time==='06:00').status,'free');
- const blockedNew=await req('/api/slots?date='+d2);for(const h of ['09:00','10:00','11:00'])assert.equal(blockedNew.body.slots.find(x=>x.time===h).status,'busy');
+ const b={date:d1,time:'06:00',durationMinutes:120,name:'Student Lookup Test',phone,note:'Private notes',website:'',policyAccepted:true};
+ const a=await req('/api/book',json('POST',b));assert.equal(a.status,201);assert.ok(!('code' in a.body));
+ const b2=await req('/api/book',json('POST',{...b,date:d2,time:'09:00'}));assert.equal(b2.status,201);
+ const lookup=await req('/api/my-lessons',json('POST',{phone:'067 123 45 67'}));
+ assert.equal(lookup.status,200);
+ assert.ok(lookup.body.lessons.some(x=>x.date===d1&&x.time==='06:00'&&x.end==='08:00'));
+ assert.ok(lookup.body.lessons.some(x=>x.date===d2&&x.time==='09:00'));
+ const full=JSON.stringify(lookup.body);
+ assert.ok(!full.includes('Student Lookup Test'));
+ assert.ok(!full.includes('Private notes'));
+ assert.ok(!full.includes(phone));
+ assert.ok(!full.includes('code'));
+ const invalid=await req('/api/my-lessons',json('POST',{phone:'123'}));assert.equal(invalid.status,400);
+ const noBookings=await req('/api/my-lessons',json('POST',{phone:'+380998887766'}));assert.equal(noBookings.status,200);assert.deepEqual(noBookings.body.lessons,[]);
+ const unauthorized=await req('/api/admin/state');assert.equal(unauthorized.status,401);
+ const noCodeCancel=await req('/api/manage/cancel',json('POST',{phone}));assert.equal(noCodeCancel.status,400);
+ const noCodeMove=await req('/api/manage/reschedule',json('POST',{phone,date:d2,time:'13:00',durationMinutes:60}));assert.equal(noCodeMove.status,400);
  const login=await req('/api/admin/login',json('POST',{password:authpass}));assert.equal(login.status,200);
  const cookie=login.headers.get('set-cookie').split(';')[0];
- const calendar=await fetch(base+'/api/admin/calendar.ics',{headers:{Cookie:cookie}});
- assert.equal(calendar.status,200);const content=await calendar.text();assert.match(content,/BEGIN:VCALENDAR/);assert.match(content,/Student Portal Test/);
- const forbidden=await fetch(base+'/api/admin/calendar.ics');assert.equal(forbidden.status,401);
- const cancelled=await req('/api/manage/cancel',json('POST',access));assert.equal(cancelled.status,200);
- const after=await req('/api/manage/lookup',json('POST',access));assert.equal(after.body.booking.status,'cancelled');
- const repeated=await req('/api/manage/cancel',json('POST',access));assert.equal(repeated.status,409);
- const empty=await req('/api/slots?date='+d2);assert.equal(empty.body.slots.find(x=>x.time==='09:00').status,'free');
+ const admin=await req('/api/admin/state',{headers:{Cookie:cookie}});assert.equal(admin.status,200);
+ const records=admin.body.bookings.filter(x=>x.student_name==='Student Lookup Test'&&x.status==='confirmed');
+ assert.equal(records.length,2);
+ for(const record of records){
+  const cancelled=await req('/api/admin/cancel',json('POST',{id:record.id},cookie));assert.equal(cancelled.status,200);
+ }
+ const after=await req('/api/my-lessons',json('POST',{phone}));assert.equal(after.status,200);assert.equal(after.body.lessons.length,0);
 });

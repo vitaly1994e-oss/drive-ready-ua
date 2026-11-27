@@ -46,13 +46,17 @@ test('Pupil chooses start and end directly in the calendar, and advert is visibl
 
 test('24-hour rescheduling rule visible before and after booking',()=>{const html=get('public/index.html');const js=get('public/app.js');const server=get('server.js');assert.ok(html.includes('id="policy-accepted"'));assert.ok(html.includes('confirmation-policy'));assert.ok(js.includes('policyAccepted'));assert.ok(server.includes('policy_24h_accepted_at'));});
 
-test('Self service page, reminder alarms and instructor calendar export exist',()=>{
+test('Student can find future lessons by phone without any booking reference code',()=>{
  const html=get('public/manage.html'),client=get('public/manage.js'),server=get('server.js'),home=get('public/index.html'),calendar=get('public/app.js');
- for(const x of ['id="lookup-form"','id="cancel-booking"','id="confirm-reschedule"','id="new-starts"','id="new-ends"'])assert.ok(html.includes(x),x);
- assert.ok(client.includes('/api/manage/cancel')&&client.includes('/api/manage/reschedule'));
- assert.ok(server.includes('canManage(row)')&&server.includes('24*3600000'));
- assert.ok(server.includes('booking_events')&&server.includes("app.get('/api/admin/calendar.ics'"));
+ assert.ok(html.includes('id="manage-phone"')&&html.includes('id="my-lessons-list"'));
+ assert.ok(!html.includes('id="manage-code"')&&!html.includes('id="cancel-booking"'));
+ assert.ok(!html.includes('id="confirm-reschedule"'));
+ assert.ok(client.includes('/api/my-lessons'));assert.ok(!client.includes('/api/manage/cancel'));
+ assert.ok(server.includes("app.post('/api/my-lessons'"));
+ assert.ok(server.includes("limit('phone-lookup:'"));
  assert.ok(home.includes('href="/manage.html"'));
+ assert.ok(!home.includes('id="confirm-code"'));
+ assert.ok(!calendar.includes('r.code'));
  assert.ok(calendar.includes('TRIGGER:-PT24H')&&calendar.includes('TRIGGER:-PT1H'));
  assert.ok(get('public/admin.html').includes('id="export-ics"'));
 });
