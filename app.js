@@ -4,7 +4,7 @@ const $=s=>document.querySelector(s);
 const store=(k,v)=>{try{localStorage.setItem('dru-'+k,JSON.stringify(v))}catch{}};
 const load=(k,d)=>{try{return JSON.parse(localStorage.getItem('dru-'+k))??d}catch{return d}};
 window.DRU={store,load,$};
-const theme=load('theme','dark')==='light'?'light':'dark';document.documentElement.dataset.theme=theme;
+const theme=load('theme','light')==='light'?'light':'dark';document.documentElement.dataset.theme=theme;
 const links=[
 ["index.html","Головна"],["quiz.html","Тести ПДР"],["routes.html","Маршрути"],["practice.html","Практика"],
 ["coach.html","Іспит"],["intersections.html","Перехрестя"],["official-questions.html","Питання МВС"],
