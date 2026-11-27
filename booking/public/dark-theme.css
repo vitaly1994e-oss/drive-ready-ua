@@ -1,0 +1,33 @@
+/* DRIVE TIME dark palette shared by booking, lesson lookup and instructor. */
+.theme-switch{display:inline-flex;gap:7px;align-items:center;justify-content:center;flex-shrink:0;min-height:39px;padding:8px 12px;background:var(--surface,#fff);color:var(--ink,#182923);border:1px solid var(--border,#dfe5d9);border-radius:12px;font-size:12px;font-weight:800;cursor:pointer}
+.theme-switch:hover{border-color:#76a657}.theme-switch:focus-visible{outline:3px solid #a2d771;outline-offset:2px}
+@media(max-width:700px){.top-right{gap:8px;flex-wrap:wrap;justify-content:flex-end}.theme-switch{padding:7px 9px;font-size:11px}.top-right>.admin-link{font-size:11px}.theme-switch span{display:none}}
+html[data-theme="dark"]{color-scheme:dark;--bg:#0b1419;--surface:#142229;--panel:#142229;--ink:#e7f1ed;--muted:#b0c3bb;--border:#33474b;--lime:#b9ef80;--lime-tint:#243b2a;background:#0b1419}
+html[data-theme="dark"] body{background:#0b1419!important;color:#e7f1ed!important}
+html[data-theme="dark"] .top{background:rgba(12,23,25,.96)!important;border-color:#314549}
+html[data-theme="dark"] .top-right .admin-link,html[data-theme="dark"] .logo,html[data-theme="dark"] .footer-logo,html[data-theme="dark"] .logo-text small{color:#d7e7df!important}
+html[data-theme="dark"] .theme-switch{background:#17272c;color:#e8f6ec;border-color:#425957}
+html[data-theme="dark"] .panel,html[data-theme="dark"] .aside-card,html[data-theme="dark"] .calendar,html[data-theme="dark"] .booking-details,html[data-theme="dark"] .manage-panel,html[data-theme="dark"] .admin-login{background:#142329!important;color:#e8f3ed!important;border-color:#33494b!important;box-shadow:0 12px 40px #02090944}
+html[data-theme="dark"] .booking-wrap,html[data-theme="dark"] .cross-promo,html[data-theme="dark"] .privacy-note,html[data-theme="dark"] .footer,html[data-theme="dark"] .manage-main,html[data-theme="dark"] .admin-wrap{background-color:#0b1419!important;color:#e7f1ed!important}
+html[data-theme="dark"] h1,html[data-theme="dark"] h2,html[data-theme="dark"] h3,html[data-theme="dark"] h4,html[data-theme="dark"] strong,html[data-theme="dark"] label,html[data-theme="dark"] .step-head h3,html[data-theme="dark"] .calendar-header strong,html[data-theme="dark"] .time-header strong,html[data-theme="dark"] .end-time-heading strong{color:#ecf8ef!important}
+html[data-theme="dark"] p,html[data-theme="dark"] small,html[data-theme="dark"] .muted,html[data-theme="dark"] .small,html[data-theme="dark"] .hero-desc,html[data-theme="dark"] .slot-note,html[data-theme="dark"] .step-head p,html[data-theme="dark"] .manage-intro p{color:#afc4bb!important}
+html[data-theme="dark"] .date-button,html[data-theme="dark"] .time-button,html[data-theme="dark"] .arrow-controls button,html[data-theme="dark"] .range-pill,html[data-theme="dark"] .range-choice,html[data-theme="dark"] .end-time-panel,html[data-theme="dark"] .empty-time,html[data-theme="dark"] .manage-ticket,html[data-theme="dark"] .admin-table,html[data-theme="dark"] .admin-tabs,html[data-theme="dark"] .admin-tab,html[data-theme="dark"] .day-row{background:#1a2d31!important;color:#e8f2ee!important;border-color:#3e5756!important}
+html[data-theme="dark"] .date-button.selected,html[data-theme="dark"] .time-button.selected,html[data-theme="dark"] button[aria-pressed="true"].date-button,html[data-theme="dark"] button[aria-pressed="true"].time-button{background:#365739!important;border-color:#a1d979!important;color:#fff!important}
+html[data-theme="dark"] .date-button:disabled,html[data-theme="dark"] .time-button:disabled{opacity:.4}
+html[data-theme="dark"] .date-button strong,html[data-theme="dark"] .time-button strong,html[data-theme="dark"] .range-pill strong{color:#effbf1!important}
+html[data-theme="dark"] input:not([type="checkbox"]),html[data-theme="dark"] textarea,html[data-theme="dark"] select{color:#edf8ef!important;background:#17282c!important;border-color:#43605b!important}
+html[data-theme="dark"] input::placeholder,html[data-theme="dark"] textarea::placeholder{color:#a1bbb0!important;opacity:1}
+html[data-theme="dark"] input:focus,html[data-theme="dark"] textarea:focus,html[data-theme="dark"] select:focus{border-color:#a3dc77!important;box-shadow:0 0 0 3px #315438!important}
+html[data-theme="dark"] .chosen,html[data-theme="dark"] .booking-policy,html[data-theme="dark"] .booking-policy-consent,html[data-theme="dark"] .confirmation-policy,html[data-theme="dark"] .manage-policy,html[data-theme="dark"] .confirmation,html[data-theme="dark"] .range-choice{background:#20372e!important;border-color:#4b6d51!important}
+html[data-theme="dark"] .chosen strong,html[data-theme="dark"] .chosen span,html[data-theme="dark"] .booking-policy strong,html[data-theme="dark"] .booking-policy p,html[data-theme="dark"] .confirmation-policy strong,html[data-theme="dark"] .confirmation-policy p,html[data-theme="dark"] .booking-policy-consent span{color:#e0f3e1!important}
+html[data-theme="dark"] .booking-policy-icon,html[data-theme="dark"] .chosen-symbol{background:#335139!important;color:#c7f6a1!important;border-color:#547757!important}
+html[data-theme="dark"] .secondary-btn,html[data-theme="dark"] .range-reset,html[data-theme="dark"] .text-button{background:#213539!important;color:#f0fff1!important;border-color:#4a635f!important}
+html[data-theme="dark"] .primary-btn,html[data-theme="dark"] .header-book{background:#b9ef80!important;color:#12251b!important;border-color:#b9ef80!important}
+html[data-theme="dark"] .header-book span{color:#22432c!important}
+html[data-theme="dark"] .hero-visual,html[data-theme="dark"] .promo-side,html[data-theme="dark"] .cross-promo-art{border-color:#466259}
+html[data-theme="dark"] .cross-promo-copy,html[data-theme="dark"] .aside-steps,html[data-theme="dark"] .aside-help{color:#eaf5ed}
+html[data-theme="dark"] .booking-heading-badge,html[data-theme="dark"] .manage-chip{background:#2c4934!important;color:#cbf4b3!important;border-color:#4d7156!important}
+html[data-theme="dark"] .step-head .step-number,html[data-theme="dark"] .step-number{background:#304d39!important;color:#e3f8d2!important}
+html[data-theme="dark"] .calendar-divider,html[data-theme="dark"] .footer,html[data-theme="dark"] .booking-layout,html[data-theme="dark"] .privacy-note{border-color:#354b49!important}
+html[data-theme="dark"] a:focus-visible,html[data-theme="dark"] button:focus-visible{outline:3px solid #beee81;outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.theme-switch{transition:none!important}}
