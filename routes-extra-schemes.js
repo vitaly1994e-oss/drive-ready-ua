@@ -1,0 +1,59 @@
+/* Additional route images individually checked against official TSC MVS pages, November 2026. No guessed route numbers. */
+window.DRU_EXTRA_SCHEMAS={
+  "3243": [
+    [
+      "1",
+      "https://hsc.gov.ua/wp-content/uploads/2026/05/3243-1-1.jpg"
+    ],
+    [
+      "2",
+      "https://hsc.gov.ua/wp-content/uploads/2026/05/3243-2-1.jpg"
+    ],
+    [
+      "3",
+      "https://hsc.gov.ua/wp-content/uploads/2026/05/3243-3-1.jpg"
+    ],
+    [
+      "4",
+      "https://hsc.gov.ua/wp-content/uploads/2026/05/3243-4-1.jpg"
+    ],
+    [
+      "5",
+      "https://hsc.gov.ua/wp-content/uploads/2026/05/3243-5-1.jpg"
+    ]
+  ],
+  "4651": [
+    [
+      "1",
+      "https://hsc.gov.ua/wp-content/uploads/2025/12/4651_1.jpg"
+    ],
+    [
+      "2",
+      "https://hsc.gov.ua/wp-content/uploads/2025/12/4651_2.jpg"
+    ],
+    [
+      "3",
+      "https://hsc.gov.ua/wp-content/uploads/2025/12/4651_3.jpg"
+    ],
+    [
+      "4",
+      "https://hsc.gov.ua/wp-content/uploads/2025/12/4651_4.jpg"
+    ]
+  ],
+  "5154": [
+    [
+      "1",
+      "https://hsc.gov.ua/wp-content/uploads/2025/07/5154-1.jpg"
+    ]
+  ],
+  "8042": [
+    [
+      "1",
+      "https://hsc.gov.ua/wp-content/uploads/2025/12/1-Marshrut-8042_nakazom-na-sajt.jpg"
+    ],
+    [
+      "3",
+      "https://hsc.gov.ua/wp-content/uploads/2026/02/8042__3.jpg"
+    ]
+  ]
+};
