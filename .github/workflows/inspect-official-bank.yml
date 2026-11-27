@@ -1,0 +1,21 @@
+name: Inspect HSC exam PDF
+on:
+  push:
+    branches: [official-question-bank-2026-11-27]
+    paths:
+      - scripts/inspect_official_bank.py
+      - .github/workflows/inspect-official-bank.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests pymupdf
+      - run: python scripts/inspect_official_bank.py
