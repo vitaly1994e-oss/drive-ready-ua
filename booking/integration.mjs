@@ -54,3 +54,29 @@ test('Two simultaneous students cannot reserve the same lesson',async()=>{
  const weekly=await req('/api/admin/weekly',json('PUT',{duration:60,days:[1,2,3,4,5,6,7].map(dow=>({dow,enabled:true,start:360,end:1260}))},cookie));assert.equal(weekly.status,200);
  const exportCsv=await fetch(base+'/api/admin/export',{headers:{Cookie:cookie}});assert.equal(exportCsv.status,200);assert.match(exportCsv.headers.get('content-type'),/text\/csv/);
 });
+
+test('Student manages booking by reference and phone; move does not lose old slot',async()=>{
+ const info=await req('/api/info');const d1=dateAdd(info.body.today,4),d2=dateAdd(info.body.today,5);
+ const b={date:d1,time:'06:00',durationMinutes:120,name:'Student Portal Test',phone,note:'Integration',website:'',policyAccepted:true};
+ const create=await req('/api/book',json('POST',b));assert.equal(create.status,201);
+ const code=create.body.code,access={code,phone};
+ const wrong=await req('/api/manage/lookup',json('POST',{code,phone:'+380999999999'}));assert.equal(wrong.status,404);
+ const lookup=await req('/api/manage/lookup',json('POST',access));
+ assert.equal(lookup.status,200);assert.equal(lookup.body.booking.canChange,true);
+ assert.equal(lookup.body.booking.duration,120);
+ const conflict=await req('/api/manage/reschedule',json('POST',{...access,date:d2,time:'02:00',durationMinutes:60}));assert.equal(conflict.status,409);
+ const still=await req('/api/manage/lookup',json('POST',access));assert.equal(still.body.booking.date,d1);
+ const move=await req('/api/manage/reschedule',json('POST',{...access,date:d2,time:'09:00',durationMinutes:180}));assert.equal(move.status,200);
+ const updated=await req('/api/manage/lookup',json('POST',access));assert.equal(updated.body.booking.date,d2);assert.equal(updated.body.booking.duration,180);
+ const freeOld=await req('/api/slots?date='+d1);assert.equal(freeOld.body.slots.find(x=>x.time==='06:00').status,'free');
+ const blockedNew=await req('/api/slots?date='+d2);for(const h of ['09:00','10:00','11:00'])assert.equal(blockedNew.body.slots.find(x=>x.time===h).status,'busy');
+ const login=await req('/api/admin/login',json('POST',{password:authpass}));assert.equal(login.status,200);
+ const cookie=login.headers.get('set-cookie').split(';')[0];
+ const calendar=await fetch(base+'/api/admin/calendar.ics',{headers:{Cookie:cookie}});
+ assert.equal(calendar.status,200);const content=await calendar.text();assert.match(content,/BEGIN:VCALENDAR/);assert.match(content,/Student Portal Test/);
+ const forbidden=await fetch(base+'/api/admin/calendar.ics');assert.equal(forbidden.status,401);
+ const cancelled=await req('/api/manage/cancel',json('POST',access));assert.equal(cancelled.status,200);
+ const after=await req('/api/manage/lookup',json('POST',access));assert.equal(after.body.booking.status,'cancelled');
+ const repeated=await req('/api/manage/cancel',json('POST',access));assert.equal(repeated.status,409);
+ const empty=await req('/api/slots?date='+d2);assert.equal(empty.body.slots.find(x=>x.time==='09:00').status,'free');
+});
