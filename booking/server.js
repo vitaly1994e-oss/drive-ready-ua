@@ -106,7 +106,9 @@ app.post('/api/book',async(req,res)=>{
  if(limit('book:'+req.ip,12,3600000))return errs(res,429,'Забагато спроб. Повтори пізніше');
  if(req.body.website)return errs(res,400,'Заявку відхилено');
  const name=txt(req.body.name,80),phone=txt(req.body.phone,30),note=txt(req.body.note,300),date=txt(req.body.date,10),start=m(req.body.time),duration=bookingDuration(req.body.durationMinutes??60);
- if(name.length<2||name.length>80||!/^\+?[0-9()\-\s]{7,24}$/.test(phone)||!validateDate(date)||start===null||duration===null)return errs(res,400,'Перевір дату, ім’я та телефон');
+ const nameParts=name.split(/\s+/).filter(Boolean);
+ const personPart=/^[\p{L}][\p{L}\p{M}'’\-]{1,49}$/u;
+ if(name.length>80||nameParts.length<2||!nameParts.every(personPart.test.bind(personPart))||!/^\+?[0-9()\-\s]{7,24}$/.test(phone)||!validateDate(date)||start===null||duration===null)return errs(res,400,'Перевір прізвище, ім’я, дату та телефон');
  if(req.body.policyAccepted!==true)return errs(res,400,'Потрібне підтвердження правила перенесення або скасування за 24 години');
  const c=await pool.connect();
  try{await c.query('BEGIN');await lockDay(c,date);
