@@ -30,13 +30,16 @@ test('Admin offers weekly edits, day-off controls and booked learner details',()
  for(const p of ['/api/admin/state','/api/admin/weekly','/api/admin/override','/api/admin/block'])assert.ok(js.includes(p));
 });
 
-test('Student chooses flexible lesson duration and has calendar / reminder actions',()=>{
- const html=get('public/index.html'),ui=get('public/app.js'),server=get('server.js'),css=get('public/style.css');
- for(const x of ['id="duration-minus"','id="duration-plus"','id="duration-label"','data-duration="180"','id="google-calendar"','id="share-reminder"','id="copy-reminder"','id="download-calendar"'])assert.ok(html.includes(x),x);
+test('Pupil chooses start and end directly in the calendar, and advert is visible near booking',()=>{
+ const html=get('public/index.html'),ui=get('public/app.js'),server=get('server.js'),css=get('public/booking-v3.css'),admin=get('public/admin.html');
+ for(const x of ['id="range-start-label"','id="range-end-label"','id="range-reset"','id="end-time-grid"','id="time-grid"','id="google-calendar"','id="share-reminder"','id="copy-reminder"','id="download-calendar"'])assert.ok(html.includes(x),x);
+ assert.ok(!html.includes('id="duration-minus"')&&!html.includes('id="duration-plus"'),'no confusing duration +/- buttons');
+ assert.ok(html.includes('href="/booking-v3.css"'));
+ assert.ok(admin.includes('href="/booking-v3.css"'));
+ assert.ok(html.includes('promo-side')&&html.includes('cross-promo'));
  assert.ok(html.includes('https://drive-ready-ua.onrender.com/'));
- assert.ok(html.includes('big-promo-logo')&&html.includes('promo-big-button'));
- for(const x of ['durationMinutes','BEGIN:VALARM','TRIGGER:-PT1H','navigator.share','calendar.google.com'])assert.ok(ui.includes(x),x);
+ for(const x of ['/api/ends','pickStart','durationMinutes','BEGIN:VALARM','TRIGGER:-PT1H','navigator.share','calendar.google.com'])assert.ok(ui.includes(x),x);
+ assert.ok(server.includes("app.get('/api/ends'"));
  assert.ok(server.includes('pg_advisory_xact_lock'));
- for(const x of ['ALTER TABLE booking_appointments ADD COLUMN IF NOT EXISTS duration_min','overlap(start,end','duration_min FROM booking_appointments'])assert.ok(server.includes(x),x);
- assert.ok(css.includes('.cross-promo')&&css.includes('.duration-control'));
+ assert.ok(css.includes('.range-choice')&&css.includes('.end-time-panel')&&css.includes('.promo-side')&&css.includes('.cross-promo'));
 });
