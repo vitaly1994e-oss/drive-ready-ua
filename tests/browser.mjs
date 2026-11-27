@@ -17,7 +17,7 @@ try {
  await page.goto(root+'/routes.html');
  await page.locator('#search').fill('6341');
  assert.equal(await page.locator('.route-card').count(),1);
- assert.equal(await page.locator('.route-open').count(),15);
+ assert.equal(await page.locator('.route-open').count(),20);
  await page.locator('.route-open').first().click();
  assert.equal(await page.locator('#route-modal').isVisible(),true);
  assert.match(await page.locator('#route-modal-title').innerText(),/6341.*маршрут №1/);
@@ -32,6 +32,13 @@ try {
  await page.locator('.route-card button').click();
  assert.match(await page.locator('#detail').innerText(),/8 вересня 2026/);
  assert.equal(await page.locator('#detail .route-open').count(),0);
+ await page.locator('#search').fill('6342');
+ assert.equal(await page.locator('.route-open').count(),20);
+ await page.locator('#search').fill('6348');
+ assert.equal(await page.locator('.route-open').count(),5);
+ await page.locator('#search').fill('6350');
+ assert.equal(await page.locator('.route-open').count(),10);
+ assert.match(await page.locator('.route-open').first().innerText(),/Схема №1/);
  await page.locator('#search').fill('7141');
  assert.equal(await page.locator('.route-open').count(),2);
  await page.locator('#search').fill('0541');
