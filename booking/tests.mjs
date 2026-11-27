@@ -81,3 +81,13 @@ test('Theme switch is available on every booking screen and uses persistent inde
  assert.ok(script.includes('localStorage.setItem')&&script.includes('data-theme'));
  assert.ok(css.includes('html[data-theme="dark"]')&&css.includes('.booking-policy'));
 });
+
+test('Distinct Ukrainian educational visual identity and kinetic booking design are present',()=>{
+ const homepage=get('../index.html');
+ assert.ok(homepage.includes('brand-ua.css')&&homepage.includes('ukraine-ribbon')&&homepage.includes('edu-ticker'));
+ const eduStyle=get('../brand-ua.css');
+ assert.ok(eduStyle.includes('#ffdb42')&&eduStyle.includes('#071e49')&&eduStyle.includes('prefers-reduced-motion'));
+ for(const page of ['public/index.html','public/manage.html','public/admin.html'])assert.ok(get(page).includes('/kinetic-studio.css'));
+ const bookingStyle=get('public/kinetic-studio.css');
+ assert.ok(bookingStyle.includes('#ff6e49')&&bookingStyle.includes('html[data-theme=dark]'));
+});
