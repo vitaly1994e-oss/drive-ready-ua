@@ -48,6 +48,13 @@ try {
  assert.equal(await page.locator('.route-open').count(),2);
  await page.locator('#search').fill('0541');
  assert.equal(await page.locator('.route-open').count(),5);
+ await page.goto(root+'/official-questions.html');
+ assert.equal(await page.locator('iframe').count(),0,'Заблоковані PDF-фрейми видалено');
+ await page.waitForFunction(()=>{const b=document.querySelector('#start');return b&&!b.disabled},{timeout:45000});
+ await page.locator('#start').click();
+ assert.match(await page.locator('#question-number').innerText(),/1 \/ 20/);
+ assert.ok(await page.locator('#answers .answer').count()>1);
+ await page.locator('#stop').click();
  await page.goto(root+'/quiz.html');
  await page.waitForFunction(()=>{const b=document.querySelector('#start');return b&&!b.disabled},{timeout:45000});
  assert.match(await page.locator('#bank-count').innerText(),/питань для цієї категорії/);
