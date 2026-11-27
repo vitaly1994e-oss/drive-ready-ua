@@ -22,9 +22,10 @@ window.DRUVoice=(()=>{
     if(!text)return false;
     stop();
     refreshVoices();
-    const selected=voices.find(v=>/^uk(?:-|$)/i.test(v.lang))||null;
+    const ukrainian=voices.find(v=>/^uk(?:-|$)/i.test(v.lang))||null;
+    const selected=ukrainian||voices.find(v=>/^ru(?:-|$)/i.test(v.lang))||voices.find(v=>/^en(?:-|$)/i.test(v.lang))||voices[0]||null;
     const speech=new SpeechSynthesisUtterance(String(text));
-    speech.lang='uk-UA';
+    speech.lang=selected?.lang||'uk-UA';
     // Якщо українського голосу немає, дозволяємо браузеру обрати голос за uk-UA.
     if(selected)speech.voice=selected;
     speech.rate=Number.isFinite(+rate)?Math.max(.65,Math.min(1.4,+rate)):1;
@@ -32,14 +33,14 @@ window.DRUVoice=(()=>{
     speech.volume=1;
     const token={};
     active=token;
-    speech.onstart=()=>{if(active===token)setStatus(selected?'🔊 Озвучення українською':'🔊 Відтворення доступним голосом браузера (український голос не встановлено)')};
+    speech.onstart=()=>{if(active===token)setStatus(ukrainian?'🔊 Озвучення українською':'🔊 Відтворення доступним голосом браузера (український голос не встановлено)')};
     speech.onend=()=>{if(active===token){active=null;setStatus('✓ Команду озвучено')}};
     speech.onerror=e=>{if(active===token){active=null;setStatus('Не вдалося відтворити голос ('+(e.error||'помилка')+'). Натисни «Перевірити голос» або перевір звук у браузері.')}};
     try{
       synth().cancel();
       synth().resume();
       synth().speak(speech);
-      setStatus(selected?'Запускаємо український голос…':'Запускаємо озвучення. Український голос у браузері не знайдено; можлива інша вимова.');
+      setStatus(ukrainian?'Запускаємо український голос…':selected?'Запускаємо резервний голос '+selected.lang+'. Для правильної вимови встанови український голос у системі.':'У браузері немає встановлених голосів. Спробуй браузер Chrome, Edge або Safari та налаштування синтезу мовлення.');
       return true;
     }catch(error){
       active=null;
