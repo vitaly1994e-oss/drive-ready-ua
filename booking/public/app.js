@@ -118,15 +118,17 @@ $('#next-week').onclick=()=>{state.offset=Math.min(56,state.offset+7);resetSelec
 $('#booking-form').addEventListener('submit',async e=>{
  e.preventDefault();error('');if(state.busy)return;
  if(!state.date||!state.start||!state.time)return error('Обери день, час початку та завершення.');
- const name=$('#student-name').value.trim(),phone=$('#student-phone').value.trim();
- if(name.length<2)return error('Вкажи ім’я (принаймні 2 символи).');
+ const surname=$('#student-surname').value.trim().replace(/\s+/g,' '),given=$('#student-name').value.trim().replace(/\s+/g,' '),phone=$('#student-phone').value.trim();
+ const personPart=/^[\p{L}][\p{L}\p{M}'’\- ]{1,49}$/u;
+ if(!personPart.test(surname)||!personPart.test(given))return error('Вкажи коректно прізвище та ім’я (окремо, по 2–50 символів).');
+ const name=surname+' '+given;
  if(!/^\+?[0-9()\-\s]{7,24}$/.test(phone))return error('Вкажи коректний номер телефону.');
  if(!$('#policy-accepted').checked)return error('Підтвердь, що ознайомився(-лася) з правилом повідомлення за 24 години.');
  if(!$('#consent').checked)return error('Підтвердь згоду на використання контактів.');
  state.busy=true;chosen();
  try{
   const receipt=await api('/api/book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,note:$('#student-note').value.trim(),website:$('#website').value,date:state.date,time:state.start,durationMinutes:state.durationMinutes,policyAccepted:$('#policy-accepted').checked})});
-  state.receipt=receipt;$('#confirm-date').textContent=human(receipt.date);
+  state.receipt=receipt;$('#confirm-student').textContent=name;$('#confirm-date').textContent=human(receipt.date);
   $('#confirm-time').textContent=receipt.time+'—'+hm(toMinutes(receipt.time)+receipt.duration)+' · '+durationShort(receipt.duration);
   setupCalendarLinks(receipt);
   $('#booking-success').classList.remove('hidden');$('#details').classList.add('hidden');
@@ -156,5 +158,5 @@ $('#share-reminder').onclick=async()=>{
  try{await navigator.clipboard.writeText(text);$('#reminder-status').textContent='Текст скопійовано. Встав його в застосунок «Нагадування» на телефоні.'}catch{$('#reminder-status').textContent=text}
 };
 $('#copy-reminder').onclick=async()=>{if(!state.receipt)return;const text=reminderText(state.receipt);try{await navigator.clipboard.writeText(text);$('#reminder-status').textContent='Нагадування скопійовано. Встав у програму нагадувань.'}catch{$('#reminder-status').textContent=text}};
-$('#new-booking').onclick=()=>{state.receipt=null;$('#details').classList.remove('hidden');$('#booking-success').classList.add('hidden');$('#booking-form').reset();resetSelection();$('#booking').scrollIntoView({behavior:'smooth'});fetchDates()};
+$('#new-booking').onclick=()=>{state.receipt=null;$('#details').classList.remove('hidden');$('#booking-success').classList.add('hidden');$('#policy-accepted').checked=false;$('#consent').checked=false;$('#student-note').value='';resetSelection();$('#booking').scrollIntoView({behavior:'smooth'});fetchDates()};
 initialize();
