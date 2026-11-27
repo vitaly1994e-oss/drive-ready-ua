@@ -3,7 +3,7 @@
 <body>
 <header class="top"><div class="wrap top-content">
 <a class="logo" href="/" aria-label="DRIVE TIME"><span class="logo-icon">↗</span><span class="logo-text">DRIVE<span>TIME</span><small>ТВОЯ ТЕРИТОРІЯ ВОДІННЯ</small></span></a>
-<nav class="top-right" aria-label="Навігація"><a href="#booking" class="header-book">Запис на урок <span>↗</span></a><a href="/admin.html" class="admin-link">Для інструктора</a></nav>
+<nav class="top-right" aria-label="Навігація"><a href="/manage.html" class="admin-link">Мій запис</a><a href="#booking" class="header-book">Запис на урок <span>↗</span></a><a href="/admin.html" class="admin-link">Для інструктора</a></nav>
 </div></header>
 <main>
 <section class="hero wrap"><div class="hero-left">
@@ -41,7 +41,7 @@
 </div>
 <div id="booking-success" class="panel success hidden" aria-live="polite"><span class="success-icon">✓</span><div class="eyebrow">ВСЕ ГОТОВО</div><h2>Побачимось за кермом!</h2><p>Твій час збережено. Додай його в календар або збережи нагадування, щоб не пропустити заняття.</p><div class="confirmation"><span id="confirm-date"></span><strong id="confirm-time"></strong><small>Код: <b id="confirm-code"></b></small></div>
 <div class="confirmation-policy"><span aria-hidden="true">◷</span><p><strong>Плануєш перенести або скасувати?</strong> Повідом інструктора не пізніше ніж за 24 години до заняття. Якщо залишилось менше доби — погодь зміну особисто, повідомивши код запису.</p></div><div class="success-actions"><a id="google-calendar" class="primary-btn" target="_blank" rel="noopener noreferrer" href="#">Google Календар ↗</a><button id="download-calendar" type="button" class="secondary-btn">Календар iPhone / .ics ↓</button><button id="share-reminder" type="button" class="secondary-btn">Нагадування ↗</button><button id="copy-reminder" type="button" class="secondary-btn">Скопіювати нагадування</button></div>
-<p class="small muted" id="reminder-status" role="status"></p><button id="new-booking" class="text-button" type="button">Записатися ще раз →</button><p class="small muted">Запис збережено сервером. Додавання у календар і нагадування виконує твій телефон; автоматичні SMS наразі не надсилаються.</p>
+<p class="small muted" id="reminder-status" role="status"></p><a class="primary-btn manage-link" href="/manage.html">Перенести або скасувати мій запис ↗</a><button id="new-booking" class="text-button" type="button">Записатися ще раз →</button><p class="small muted">Запис збережено сервером. Додавання у календар і нагадування виконує твій телефон; автоматичні SMS наразі не надсилаються.</p>
 </div>
 </div>
 <aside class="booking-aside">
@@ -53,7 +53,7 @@
   <span class="promo-side-action">Перейти на DRIVE READY UA <span>↗</span></span>
 </a>
 <div class="aside-card aside-steps"><span class="eyebrow">ЧОМУ ЦЕ ЗРУЧНО</span><h3>Усе просто.<br>Без зайвого.</h3><div class="step"><span>01</span><div><strong>Сам обираєш тривалість</strong><p>Можеш взяти одну, дві, три години або більше.</p></div></div><div class="step"><span>02</span><div><strong>Бачиш тільки доступне</strong><p>Календар враховує всі записи та вихідні.</p></div></div><div class="step"><span>03</span><div><strong>Не забудеш про урок</strong><p>Додай подію в календар або поділися текстом нагадування.</p></div></div></div>
-<div class="aside-card aside-help"><span class="eyebrow">ПОТРІБНО ПЕРЕНЕСТИ?</span><h3>Плани змінилися?</h3><p>Для перенесення чи скасування звернися до інструктора, повідомивши код підтвердження.</p></div>
+<div class="aside-card aside-help"><span class="eyebrow">ПОТРІБНО ПЕРЕНЕСТИ?</span><h3>Плани змінилися?</h3><p>Перенести або скасувати заняття за 24 години до початку можна <a href="/manage.html">самостійно за кодом запису</a>. Якщо залишилось менше 24 годин — звернися до інструктора.</p></div>
 </aside>
 </div></div></section>
 <section class="cross-promo"><div class="wrap cross-promo-inner">
