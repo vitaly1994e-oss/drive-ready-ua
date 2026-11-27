@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin.html
+Disallow: /manage.html
+
+Sitemap: https://drive-time-booking-ov62.onrender.com/sitemap.xml
