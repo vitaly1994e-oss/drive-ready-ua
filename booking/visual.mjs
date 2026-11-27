@@ -29,7 +29,7 @@ try{
  }
  const admin=await browser.newPage({viewport:{width:390,height:844}});
  await admin.goto(url+'/admin.html',{waitUntil:'networkidle'});
- assert.ok((await admin.locator('link[rel=stylesheet]').getAttribute('href')).includes('booking-v3.css'));
+ assert.ok((await admin.locator('link[rel=stylesheet][href="/booking-v3.css"]').getAttribute('href')).includes('booking-v3.css'));
  assert.equal(await admin.locator('#admin-login').isVisible(),true);
  await admin.close();
  console.log('Visual UI OK: 390px mobile, 1280px desktop, range selection, promo, shared CSS.');
