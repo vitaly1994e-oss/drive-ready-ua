@@ -44,11 +44,11 @@ async function schedule(date,client=pool){const [week,override,duration]=await P
  client.query('SELECT closed,start_min,end_min FROM booking_overrides WHERE day=$1',[date]),
  setting(client)
 ]);const w=week.rows[0],o=override.rows[0];return {enabled:o? !o.closed:!!w?.enabled,start:o?.start_min??w?.start_min??360,end:o?.end_min??w?.end_min??1260,duration}}
-async function slots(date,client=pool,desiredMinutes=null){
+async function slots(date,client=pool,desiredMinutes=null,excludeId=null){
  const s=await schedule(date,client),now=nowKyiv();if(!s.enabled)return [];
  const requested=bookingDuration(desiredMinutes)||s.duration;
  const [taken,blocked]=await Promise.all([
- client.query("SELECT start_min,duration_min FROM booking_appointments WHERE day=$1 AND status='confirmed'",[date]),
+ client.query("SELECT start_min,duration_min FROM booking_appointments WHERE day=$1 AND status='confirmed' AND ($2::bigint IS NULL OR id<>$2)",[date,excludeId]),
  client.query('SELECT start_min,duration_min FROM booking_blocks WHERE day=$1',[date])
  ]);
  const out=[];
@@ -72,6 +72,8 @@ async function init(){const c=await pool.connect();try{await c.query('BEGIN');
  await c.query(`CREATE TABLE IF NOT EXISTS booking_appointments(id bigserial PRIMARY KEY,day date NOT NULL,start_min integer NOT NULL,duration_min integer NOT NULL DEFAULT 60,student_name varchar(80) NOT NULL,phone varchar(30) NOT NULL,note varchar(300) NOT NULL DEFAULT '',code varchar(36) NOT NULL UNIQUE,status varchar(16) NOT NULL DEFAULT 'confirmed',created_at timestamptz DEFAULT now(),CHECK(status IN('confirmed','cancelled')))`);
  await c.query('ALTER TABLE booking_appointments ADD COLUMN IF NOT EXISTS duration_min integer NOT NULL DEFAULT 60');
  await c.query('ALTER TABLE booking_appointments ADD COLUMN IF NOT EXISTS policy_24h_accepted_at timestamptz');
+ await c.query('ALTER TABLE booking_appointments ADD COLUMN IF NOT EXISTS updated_at timestamptz');
+ await c.query(`CREATE TABLE IF NOT EXISTS booking_events(id bigserial PRIMARY KEY, appointment_id bigint NOT NULL REFERENCES booking_appointments(id), action varchar(25) NOT NULL, prior_day date,prior_start integer,new_day date,new_start integer,performed_by varchar(20) NOT NULL,created_at timestamptz NOT NULL DEFAULT now())`);
  await c.query("CREATE UNIQUE INDEX IF NOT EXISTS uq_active_appointment ON booking_appointments(day,start_min) WHERE status='confirmed'");
  await c.query('COMMIT');console.log('Booking database ready')
  }catch(e){await c.query('ROLLBACK');throw e}finally{c.release()}}
@@ -115,6 +117,62 @@ app.post('/api/book',async(req,res)=>{
  const r=await c.query("INSERT INTO booking_appointments(day,start_min,duration_min,student_name,phone,note,code,status,policy_24h_accepted_at) VALUES($1,$2,$3,$4,$5,$6,$7,'confirmed',now()) RETURNING id",[date,start,duration,name,phone,note,code]);
  await c.query('COMMIT');res.status(201).json({ok:true,code,id:String(r.rows[0].id),date,time:hhmm(start),duration,timezone:TIME_ZONE})
  }catch(e){await c.query('ROLLBACK').catch(()=>{});console.error('book failed',e.code||e.message);errs(res,e.code==='23505'?409:503,e.code==='23505'?'Цей час уже зайнятий':'Не вдалося підтвердити запис')}finally{c.release()}
+});
+
+const phoneDigits=v=>String(v||'').replace(/\D/g,'');
+const validManage=body=>/^[A-F0-9]{10}$/.test(String(body?.code||'').toUpperCase())&&phoneDigits(body?.phone).length>=9&&phoneDigits(body?.phone).length<=15;
+const kyivOffsetMinutes=(date)=>{const p=new Intl.DateTimeFormat('en-US',{timeZone:TIME_ZONE,timeZoneName:'shortOffset'}).formatToParts(new Date(date+'T12:00:00Z')).find(x=>x.type==='timeZoneName')?.value||'GMT+2';const z=/GMT([+-])(\d{1,2})(?::(\d{2}))?/.exec(p);return z?(z[1]==='-'?-1:1)*(Number(z[2])*60+Number(z[3]||0)):120};
+const startsAtMillis=(day,start)=>Date.parse(day+'T00:00:00Z')+start*60000-kyivOffsetMinutes(day)*60000;
+const hoursBefore=(day,start)=>Math.floor((startsAtMillis(day,start)-Date.now())/3600000*10)/10;
+const canManage=row=>row.status==='confirmed'&&startsAtMillis(row.day,row.start_min)-Date.now()>=24*3600000;
+const getManage=async(client,body,lock=false)=>{
+ const q=await client.query("SELECT id::text,code,phone,student_name,to_char(day,'YYYY-MM-DD') AS day,start_min,duration_min,status FROM booking_appointments WHERE code=$1"+(lock?" FOR UPDATE":""),[String(body.code).toUpperCase()]);
+ const row=q.rows[0];if(!row||phoneDigits(body.phone)!==phoneDigits(row.phone))return null;return row;
+};
+const manageCheck=(req,res,next)=>{if(limit('manage:'+req.ip,16,3600000))return errs(res,429,'Забагато спроб. Повтори пізніше');if(!validManage(req.body))return errs(res,400,'Перевір код запису та номер телефону');next()};
+app.post('/api/manage/lookup',manageCheck,async(req,res)=>{
+ try{const row=await getManage(pool,req.body);if(!row)return errs(res,404,'Запис не знайдено. Перевір код та телефон');
+ res.set('Cache-Control','no-store');
+ res.json({ok:true,booking:{name:row.student_name,date:row.day,time:hhmm(row.start_min),end:hhmm(row.start_min+row.duration_min),duration:row.duration_min,status:row.status,canChange:canManage(row),hoursLeft:Math.max(0,hoursBefore(row.day,row.start_min))}});
+ }catch(e){console.error('manage lookup',e.message);errs(res,503,'Не вдалося відкрити запис')}
+});
+app.post('/api/manage/cancel',manageCheck,async(req,res)=>{
+ const c=await pool.connect();try{await c.query('BEGIN');const row=await getManage(c,req.body,true);
+ if(!row){await c.query('ROLLBACK');return errs(res,404,'Запис не знайдено')}
+ if(!canManage(row)){await c.query('ROLLBACK');return errs(res,409,'Самостійне скасування доступне щонайменше за 24 години. Зв’яжись з інструктором')}
+ await lockDay(c,row.day);
+ await c.query("UPDATE booking_appointments SET status='cancelled',updated_at=now() WHERE id=$1",[row.id]);
+ await c.query("INSERT INTO booking_events(appointment_id,action,prior_day,prior_start,performed_by) VALUES($1,'cancelled',$2,$3,'student')",[row.id,row.day,row.start_min]);
+ await c.query('COMMIT');res.json({ok:true,message:'Запис скасовано. Час звільнено'});
+ }catch(e){await c.query('ROLLBACK').catch(()=>{});console.error('manage cancel',e.message);errs(res,503,'Не вдалося скасувати запис')}finally{c.release()}
+});
+app.post('/api/manage/reschedule',manageCheck,async(req,res)=>{
+ const day=txt(req.body.date,10),start=m(req.body.time),duration=bookingDuration(req.body.durationMinutes);
+ if(!validateDate(day)||start===null||duration===null)return errs(res,400,'Обери доступні дату, час і тривалість');
+ const c=await pool.connect();
+ try{await c.query('BEGIN');const row=await getManage(c,req.body,true);
+ if(!row){await c.query('ROLLBACK');return errs(res,404,'Запис не знайдено')}
+ if(!canManage(row)){await c.query('ROLLBACK');return errs(res,409,'Самостійне перенесення доступне щонайменше за 24 години. Зв’яжись з інструктором')}
+ for(const d of [...new Set([row.day,day])].sort())await lockDay(c,d);
+ const available=await slots(day,c,duration,row.id);
+ if(!available.some(x=>x.time===hhmm(start)&&x.status==='free')){await c.query('ROLLBACK');return errs(res,409,'Обраний час уже недоступний. Спробуй інший')}
+ await c.query('UPDATE booking_appointments SET day=$1,start_min=$2,duration_min=$3,updated_at=now() WHERE id=$4',[day,start,duration,row.id]);
+ await c.query("INSERT INTO booking_events(appointment_id,action,prior_day,prior_start,new_day,new_start,performed_by) VALUES($1,'rescheduled',$2,$3,$4,$5,'student')",[row.id,row.day,row.start_min,day,start]);
+ await c.query('COMMIT');res.json({ok:true,date:day,time:hhmm(start),duration,code:row.code,timezone:TIME_ZONE});
+ }catch(e){await c.query('ROLLBACK').catch(()=>{});console.error('manage reschedule',e.message);errs(res,e.code==='23505'?409:503,e.code==='23505'?'Час уже зайнятий':'Не вдалося перенести запис')}finally{c.release()}
+});
+app.get('/api/admin/calendar.ics',admin,async(req,res)=>{
+ try{
+  const today=nowKyiv().date;
+  const entries=await pool.query("SELECT to_char(day,'YYYY-MM-DD') AS day,start_min,duration_min,student_name,code FROM booking_appointments WHERE status='confirmed' AND day BETWEEN $1::date AND ($1::date + interval '180 days') ORDER BY day,start_min",[today]);
+  const esc=v=>String(v||'').replaceAll('\\','\\\\').replaceAll(',','\\,').replaceAll(';','\\;').replaceAll('\n','\\n');
+  const stamps=r=>r.day.replaceAll('-','')+'T'+hhmm(r.start_min).replace(':','')+'00';
+  const end=r=>r.day.replaceAll('-','')+'T'+hhmm(r.start_min+r.duration_min).replace(':','')+'00';
+  const lines=['BEGIN:VCALENDAR','VERSION:2.0','CALSCALE:GREGORIAN','PRODID:-//DRIVE TIME//Instructor Appointments//UK'];
+  for(const row of entries.rows)lines.push('BEGIN:VEVENT','UID:lesson-'+row.code+'@drive-time-booking','DTSTAMP:'+new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,''),'DTSTART;TZID=Europe/Kyiv:'+stamps(row),'DTEND;TZID=Europe/Kyiv:'+end(row),'SUMMARY:'+esc('Водіння: '+row.student_name),'DESCRIPTION:'+esc('DRIVE TIME · '+row.code),'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Заняття з водіння','TRIGGER:-PT1H','END:VALARM','END:VEVENT');
+  lines.push('END:VCALENDAR');
+  res.set('Cache-Control','private, no-store');res.type('text/calendar; charset=utf-8');res.set('Content-Disposition','attachment; filename="drive-time-schedule.ics"');res.send(lines.join('\r\n')+'\r\n');
+ }catch(e){console.error('calendar export',e.message);errs(res,503,'Календар недоступний')}
 });
 app.post('/api/admin/login',(req,res)=>{
  if(limit('login:'+req.ip,8,900000))return errs(res,429,'Забагато спроб. Повтори через 15 хв');
