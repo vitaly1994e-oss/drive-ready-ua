@@ -50,6 +50,12 @@ try {
  assert.equal(await page.locator('#route-modal').isVisible(),true);
  assert.equal(await page.locator('#route-chooser option').count(),20);
  assert.match(await page.locator('#route-modal-title').innerText(),/6341.*маршрут №1/);
+ await page.locator('#route-image-trigger').click();
+ assert.equal(await page.locator('#route-fullscreen-dialog').isVisible(),true);
+ await page.keyboard.press('Escape');
+ await page.locator('#route-fullscreen-dialog').waitFor({state:'hidden'});
+ assert.equal(await page.locator('#route-modal').isVisible(),true);
+
  assert.match(await page.locator('#route-modal-image').getAttribute('src'),/(hsc\.gov\.ua|web\.testpdr\.com)/);
  await page.locator('#route-zoom-in').click();
  assert.equal(await page.locator('#route-reset').innerText(),'130%');
