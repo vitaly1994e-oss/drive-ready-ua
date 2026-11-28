@@ -101,6 +101,12 @@ try {
  await page.locator('#stop').click();
  assert.equal(await page.locator('#result').isVisible(),true);
  assert.match(await page.locator('#result-description').innerText(),/Іспит завершено|Час вичерпано|Допущено третю/);
+ await page.goto(root+'/quiz.html');
+ await page.locator('#start:enabled').waitFor();
+ await page.locator('#mode').selectOption('diagnostic');
+ await page.locator('#start').click();
+ assert.equal(await page.locator('#question-number').innerText(),'1 / 10');
+ await page.locator('#stop').click();
  await page.goto(root+'/quiz-training.html');
  await page.locator('#begin').click();
  assert.ok(await page.locator('#answers .answer').count()>0);

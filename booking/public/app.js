@@ -83,7 +83,7 @@ async function fetchSlots(run=state.requestId){
   chosen();
  }catch(e){if(run!==state.requestId)return;root.replaceChildren();const p=document.createElement('div');p.className='empty-time';p.textContent='Помилка завантаження: '+e.message;root.append(p)}
 }
-async function pickStart(start){
+async function pickStart(start, quickDuration=null){
  state.start=start;state.time=null;state.durationMinutes=60;
  const run=++state.requestId;chosen();
  $('#time-step-heading').textContent='1. Початок — '+start;
@@ -97,6 +97,7 @@ async function pickStart(start){
   if(run!==state.requestId||state.start!==start)return;
   root.replaceChildren();
   if(!result.ends.length){const msg=document.createElement('div');msg.className='empty-time';msg.textContent='Тут немає доступного проміжку. Обери інший початок.';root.append(msg);return}
+  let quickButton;
   for(const end of result.ends){
    const button=document.createElement('button');button.type='button';button.className='time-button end-time-button';
    const time=document.createElement('strong');time.textContent=end.time;
@@ -107,11 +108,47 @@ async function pickStart(start){
     chosen();$('#details').scrollIntoView({behavior:'smooth',block:'start'});
    };
    root.append(button)
+   if(end.durationMinutes===quickDuration)quickButton=button;
   }
+  if(quickButton){quickButton.click();return true}
   panel.scrollIntoView({behavior:'smooth',block:'nearest'});
- }catch(e){root.replaceChildren();const msg=document.createElement('div');msg.className='empty-time';msg.textContent='Не вдалося завантажити завершення: '+e.message;root.append(msg)}
+ }catch(e){if(run!==state.requestId)return;root.replaceChildren();const msg=document.createElement('div');msg.className='empty-time';msg.textContent='Не вдалося завантажити завершення: '+e.message;root.append(msg)}
 }
-async function initialize(){try{const info=await api('/api/info');state.today=info.today;await fetchDates()}catch(e){say('Не вдалося відкрити розклад: '+e.message);$('#time-grid').textContent='Помилка зв’язку. Онови сторінку.'}}
+async function showQuickBooking() {
+ const days = await api('/api/days?from='+state.today+'&count=7&durationMinutes=60');
+ const first = days.days.find(day=>day.free>0);
+ if(!first)return;
+ const available = await api('/api/slots?date='+first.date+'&durationMinutes=60');
+ const slot = available.slots.find(item=>item.status==='free');
+ if(!slot)return;
+ const quick = $('#quick-booking-button');
+ const status = $('#quick-booking-status');
+ quick.textContent=human(first.date)+' · '+slot.time+'–'+hm(toMinutes(slot.time)+60)+' · 1 год';
+ $('#quick-booking').hidden=false;
+ quick.onclick=async()=>{
+  quick.disabled=true;
+  status.textContent='Перевіряємо доступність…';
+  try {
+   state.offset=0;
+   state.date=first.date;
+   resetSelection();
+   const calendarRequest=state.requestId+1;
+   await fetchDates();
+   if(calendarRequest!==state.requestId)return;
+   if(state.date!==first.date||!await pickStart(slot.time,60)){
+    status.textContent='Цей час уже недоступний. Обери інший у календарі.';
+    return;
+   }
+   status.textContent='';
+   $('#student-surname').focus({preventScroll:true});
+  } catch {
+   status.textContent='Не вдалося перевірити цей час. Спробуй ще раз.';
+  } finally {
+   quick.disabled=false;
+  }
+ };
+}
+async function initialize(){try{const info=await api('/api/info');state.today=info.today;showQuickBooking().catch(()=>{});await fetchDates()}catch(e){say('Не вдалося відкрити розклад: '+e.message);$('#time-grid').textContent='Помилка зв’язку. Онови сторінку.'}}
 $('#range-reset').onclick=()=>{resetSelection();fetchSlots().catch(e=>say(e.message))};
 $('#prev-week').onclick=()=>{state.offset=Math.max(0,state.offset-7);resetSelection();fetchDates().catch(e=>say(e.message))};
 $('#next-week').onclick=()=>{state.offset=Math.min(56,state.offset+7);resetSelection();fetchDates().catch(e=>say(e.message))};

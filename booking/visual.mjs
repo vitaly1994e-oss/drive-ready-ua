@@ -18,6 +18,10 @@ try{
   assert.equal(await page.locator('#duration-plus').count(),0,'No +/- counter');
   assert.equal(await page.locator('.promo-side').count(),1,'Ad visible beside calendar');
   assert.match(await page.locator('.promo-side').getAttribute('href'),/drive-ready-ua/);
+  await page.locator('#quick-booking-button').click();
+  await page.locator('#book-button:enabled').waitFor();
+  assert.match(await page.locator('#chosen-end').innerText(),/1 година/);
+  await page.locator('#range-reset').click();
   await page.locator('.time-button.free').first().click();
   await page.locator('#end-time-panel:not(.hidden)').waitFor();
   await page.locator('.end-time-button').nth(1).click();
