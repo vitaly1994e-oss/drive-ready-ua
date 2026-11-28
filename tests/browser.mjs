@@ -54,7 +54,7 @@ try {
  assert.equal(await page.locator('#route-fullscreen-dialog').isVisible(),true);
  await page.keyboard.press('Escape');
  await page.locator('#route-fullscreen-dialog').waitFor({state:'hidden'});
- assert.equal(await page.locator('#route-modal').isVisible(),true);
+ await page.locator('#route-modal').waitFor({state:'visible'});
 
  assert.match(await page.locator('#route-modal-image').getAttribute('src'),/(hsc\.gov\.ua|web\.testpdr\.com)/);
  await page.locator('#route-zoom-in').click();

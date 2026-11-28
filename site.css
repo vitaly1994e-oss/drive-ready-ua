@@ -314,6 +314,7 @@ html[data-theme=light] .premium-visual{border-color:#d8e6de}
 }
 
 .route-swipe-hint{display:none}
+.route-inline .route-view-controls button{touch-action:manipulation}
 .route-inline[data-swipe="true"][data-zoomed="false"] .route-image-stage{touch-action:pan-y pinch-zoom}
 @media (any-pointer:coarse){
  .route-inline[data-swipe="true"] .route-swipe-hint{display:block;margin-bottom:2px}
