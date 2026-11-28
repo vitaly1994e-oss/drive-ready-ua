@@ -5,6 +5,47 @@
 ['priority','На рівнозначному нерегульованому перехресті авто наближається справа.',['Дати дорогу авто справа','Виїхати першим незалежно від обстановки'],0,'Для рівнозначних доріг діє правило перешкоди справа, з винятками ПДР.','↗️'],
 ['pedestrian','Пішохід уже переходить нерегульований перехід.',['Не створювати йому перешкод, за необхідності зупинитися','Продовжити рух без зміни швидкості'],0,'На переході треба надати дорогу пішоходу.','🚶'],
 ['tram','На регульованому перехресті трамвай та автомобіль мають одночасно дозволений сигнал для руху.',['Врахувати встановлені ПДР правила переваги трамвая','Завжди їхати першим на автомобілі'],0,'За загальним правилом у рівних умовах трамвай має перевагу, крім визначених ПДР винятків.','🚋'],
-['circle','Перед кільцевим перехрестям установлені відповідні знаки, а по кільцю рухається авто.',['Надати перевагу авто на кільці у випадку, передбаченому ПДР','В’їхати без огляду'],0,'На кільці важливо виконувати вимоги знаків та правила пріоритету.','🔄'],
+['circle','На нерегульованому перехресті зі знаком 4.10 автомобіль уже рухається по колу.',['Надати перевагу авто на кільці у випадку, передбаченому ПДР','В’їхати без огляду'],0,'На кільці важливо виконувати вимоги знаків та правила пріоритету.','🔄'],
 ['priority','Регулювальник подає сигнал, відмінний від сигналу світлофора.',['Виконати сигнал регулювальника','Ігнорувати регулювальника'],0,'Сигнали регулювальника пріоритетні.','👮']
-];let active=null,seq=0,answered=false;function next(){const kind=$('#intersection-topic').value;const choices=bank.filter(q=>!kind||q[0]===kind);if(!choices.length)return;active=choices[seq%choices.length];seq++;answered=false;$('#intersection-sign').textContent=active[5];$('#intersection-question').textContent=active[1];$('#intersection-feedback').textContent='';$('#intersection-options').replaceChildren();active[2].forEach((opt,n)=>{const b=document.createElement('button');b.className='answer';b.textContent=opt;b.onclick=()=>choose(n);$('#intersection-options').append(b)});$('#intersection-counter').textContent='Розглянуто ситуацій: '+(seq-1)}function choose(n){if(answered)return;answered=true;const correct=n===active[3];const arr=D.load('intersection-history',[]);D.store('intersection-history',[...(Array.isArray(arr)?arr:[]),{date:new Date().toISOString(),topic:active[0],correct}].slice(-100));[...$('#intersection-options').children].forEach((b,j)=>{b.disabled=true;if(j===active[3])b.classList.add('correct');else if(j===n)b.classList.add('wrong')});$('#intersection-feedback').className='feedback';$('#intersection-feedback').textContent=(correct?'Правильно. ':'Помилка. ')+active[4];}$('#intersection-new').onclick=next;$('#intersection-topic').onchange=()=>{seq=0;next()};next()})();
+];
+const walkthroughs = [
+ {section:8, clause:'8.10', sign:'Червоний сигнал', action:'Стоп перед лінією', actor:'', position:'stop'},
+ {section:16, clause:'16.2', sign:'Зелений сигнал', action:'Пішохід проходить першим', actor:'🚶', position:'east-cross'},
+ {section:16, clause:'16.11', sign:'Дати дорогу', action:'Авто на головній дорозі проїжджає першим', actor:'🚙', position:'east'},
+ {section:16, clause:'16.12', sign:'Рівнозначні дороги', action:'Авто справа проїжджає першим', actor:'🚙', position:'east'},
+ {section:18, clause:'18.1', sign:'Пішохідний перехід', action:'Пішохід проходить першим', actor:'🚶', position:'crossing'},
+ {section:16, clause:'16.7', sign:'Дозволено рух обом', action:'Трамвай має перевагу', actor:'🚋', position:'west'},
+ {section:16, clause:'16.12', sign:'Знак 4.10', action:'Авто на колі має перевагу', actor:'🚙', position:'circle'},
+ {section:8, clause:'8.3', sign:'Регулювальник', action:'Виконуй сигнал регулювальника', actor:'👮', position:'center'},
+];
+
+function drawScene(question) {
+ const plan = walkthroughs[bank.indexOf(question)];
+ const scene = $('#scene-actors');
+ scene.dataset.position = plan.position;
+ scene.replaceChildren();
+ const sign = document.createElement('span');
+ sign.className = 'scene-condition';
+ sign.textContent = plan.sign;
+ scene.append(sign);
+ if (plan.actor) {
+  const actor = document.createElement('span');
+  actor.className = 'scene-actor';
+  actor.textContent = plan.actor;
+  scene.append(actor);
+ }
+ $('#scene-result').hidden = true;
+ $('#intersection-rule').hidden = true;
+}
+
+function revealScene(question) {
+ const plan = walkthroughs[bank.indexOf(question)];
+ const result = $('#scene-result');
+ result.textContent = plan.action;
+ result.hidden = false;
+ const rule = $('#intersection-rule');
+ rule.href = 'https://pdr.infotech.gov.ua/theory/rules/' + plan.section;
+ rule.textContent = 'Пункт ПДР ' + plan.clause;
+ rule.hidden = false;
+}
+let active=null,seq=0,answered=false;function next(){const kind=$('#intersection-topic').value;const choices=bank.filter(q=>!kind||q[0]===kind);if(!choices.length)return;active=choices[seq%choices.length];seq++;answered=false;drawScene(active);$('#intersection-sign').textContent=active[5];$('#intersection-question').textContent=active[1];$('#intersection-feedback').textContent='';$('#intersection-options').replaceChildren();active[2].forEach((opt,n)=>{const b=document.createElement('button');b.className='answer';b.textContent=opt;b.onclick=()=>choose(n);$('#intersection-options').append(b)});$('#intersection-counter').textContent='Розглянуто ситуацій: '+(seq-1)}function choose(n){if(answered)return;answered=true;revealScene(active);const correct=n===active[3];const arr=D.load('intersection-history',[]);D.store('intersection-history',[...(Array.isArray(arr)?arr:[]),{date:new Date().toISOString(),topic:active[0],correct}].slice(-100));[...$('#intersection-options').children].forEach((b,j)=>{b.disabled=true;if(j===active[3])b.classList.add('correct');else if(j===n)b.classList.add('wrong')});$('#intersection-feedback').className='feedback';$('#intersection-feedback').textContent=(correct?'Правильно. ':'Помилка. ')+active[4];}$('#intersection-new').onclick=next;$('#intersection-topic').onchange=()=>{seq=0;next()};next()})();

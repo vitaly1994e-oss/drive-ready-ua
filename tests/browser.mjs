@@ -149,6 +149,13 @@ try {
  assert.match(await page.locator('#intersection-question').innerText(),/трамвай/);
  await page.locator('#intersection-options button').first().click();
  assert.match(await page.locator('#intersection-feedback').innerText(),/правил/);
+ assert.equal(await page.locator('#scene-result').innerText(),'Трамвай має перевагу');
+ assert.match(await page.locator('#intersection-rule').getAttribute('href'),/rules\/16$/);
+ await page.locator('#intersection-topic').selectOption('traffic');
+ assert.equal(await page.locator('#scene-result').isVisible(),false);
+ await page.locator('#intersection-options button').nth(1).click();
+ assert.equal(await page.locator('#scene-result').innerText(),'Стоп перед лінією');
+
  await page.goto(root+'/instructor.html');
  await page.locator('#student').fill('Навчальний курсант');
  await page.locator('#lesson-note').fill('Повторити зупинку');
