@@ -319,3 +319,12 @@ html[data-theme=light] .premium-visual{border-color:#d8e6de}
 @media (any-pointer:coarse){
  .route-inline[data-swipe="true"] .route-swipe-hint{display:block;margin-bottom:2px}
 }
+
+.route-numbers{position:relative;display:flex;gap:7px;overflow-x:auto;max-width:100%;padding:3px 3px 7px;scrollbar-width:thin}
+.route-numbers .button{flex:0 0 auto;min-width:44px;min-height:44px;justify-content:center;padding:6px 10px}
+.route-numbers [aria-current]{border-color:var(--accent,#e1b831);box-shadow:inset 0 0 0 1px currentColor;font-weight:800}
+#route-share-status:empty{display:none}
+#route-image-error{padding:0 12px 20px}
+#route-image-error p{padding:16px 0 4px;margin:0}
+@media(max-width:540px){#route-fullscreen-dialog .route-select-strip{display:none}}
+@media print{.route-numbers,#route-share-status,#route-share-url{display:none!important}}
