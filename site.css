@@ -288,3 +288,13 @@ html[data-theme=light] .premium-visual{border-color:#d8e6de}
 .study-shortcuts .actions{display:flex;flex-wrap:wrap;gap:10px}
 .study-shortcuts button{min-height:44px}
 @media(max-width:540px){.study-shortcuts .actions>button{width:100%}}
+
+.route-modal.route-inline{position:relative;inset:auto;z-index:auto;margin:18px 0;border-radius:16px;scroll-margin-top:16px}
+.route-inline h2{font-size:clamp(1rem,3vw,1.35rem);margin:0}
+.route-inline .route-image-stage{max-height:min(72vh,690px)}
+.route-inline .route-modal-header{justify-content:space-between}
+@media print{
+ body:has(.route-inline:not(.hidden)) .container>:not(.route-inline){display:none!important}
+ .route-inline:not(.hidden){box-shadow:none;margin:0}
+ .route-inline .route-image-stage{max-height:none}
+}

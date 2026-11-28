@@ -84,6 +84,14 @@ try {
  assert.match(await page.locator('#question-number').innerText(),/1 \/ 20/);
  assert.ok(await page.locator('#answers .answer').count()>1);
  await page.locator('#stop').click();
+ await page.goto(root+'/regions/kharkiv.html');
+ await page.locator('a[href*="tsc=6350"]').click();
+ assert.equal(await page.locator('#route-modal').isVisible(),true);
+ assert.match(await page.locator('#route-modal-title').innerText(),/Пісочин.*6350.*маршрут №1/);
+ assert.equal(await page.locator('#route-chooser option').count(),10);
+ await page.locator('#route-chooser').selectOption('9');
+ assert.match(await page.locator('#route-modal-image').getAttribute('src'),/hsc\.gov\.ua.*6350__10\.png$/);
+ assert.match(await page.locator('#route-original').getAttribute('href'),/tsts-mvs-6350\/$/);
  await page.goto(root+'/quiz.html');
  await page.waitForFunction(()=>{const b=document.querySelector('#start');return b&&!b.disabled},{timeout:45000});
  assert.match(await page.locator('#bank-count').innerText(),/питань для цієї категорії/);

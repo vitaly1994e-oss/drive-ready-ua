@@ -4,7 +4,8 @@
  * Зміни в організації іспитів і схемах необхідно перевіряти перед поїздкою.
  * ТСЦ №8041 виключено через зміну локації й маршруту у вересні 2026.
  */
-window.DRU_SCHEMAS={"1242":[["1","https://hsc.gov.ua/wp-content/uploads/2026/02/1242_1.jpg.jpeg"],["2","https://hsc.gov.ua/wp-content/uploads/2026/02/1242_2.jpeg"],["3","https://hsc.gov.ua/wp-content/uploads/2026/02/1242_3.jpeg"]],
+window.DRU_SCHEMAS={"6350":[["1","https://hsc.gov.ua/wp-content/uploads/2026/01/6350__1.png"],["2","https://hsc.gov.ua/wp-content/uploads/2026/01/6350__2.png"],["3","https://hsc.gov.ua/wp-content/uploads/2026/01/6350__3.png"],["4","https://hsc.gov.ua/wp-content/uploads/2026/01/6350__4.png"],["5","https://hsc.gov.ua/wp-content/uploads/2026/01/6350__5.png"],["6","https://hsc.gov.ua/wp-content/uploads/2026/01/6350__6.png"],["7","https://hsc.gov.ua/wp-content/uploads/2026/01/6350__7.png"],["8","https://hsc.gov.ua/wp-content/uploads/2026/01/6350__8.png"],["9","https://hsc.gov.ua/wp-content/uploads/2026/01/6350__9.png"],["10","https://hsc.gov.ua/wp-content/uploads/2026/01/6350__10.png"]],
+"1242":[["1","https://hsc.gov.ua/wp-content/uploads/2026/02/1242_1.jpg.jpeg"],["2","https://hsc.gov.ua/wp-content/uploads/2026/02/1242_2.jpeg"],["3","https://hsc.gov.ua/wp-content/uploads/2026/02/1242_3.jpeg"]],
 "3242":[["1","https://hsc.gov.ua/wp-content/uploads/2025/07/3242-1.jpg"],["2","https://hsc.gov.ua/wp-content/uploads/2025/07/3242-2.jpg"],["3","https://hsc.gov.ua/wp-content/uploads/2025/07/3242-3.jpg"]],
 "4641":[["1","https://hsc.gov.ua/wp-content/uploads/2025/12/4641_1.jpg"]],
 "5143":[["1","https://hsc.gov.ua/wp-content/uploads/2026/06/5143___1.jpg"]],
