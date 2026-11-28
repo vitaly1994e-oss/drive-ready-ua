@@ -201,6 +201,30 @@ try {
   await mp.goto(root+'/ads.html');
  assert.equal(await mp.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1),true,'Horizontal overflow ads');
  assert.equal(await mp.locator('.ads-price-card').count(),3);
+ await mp.goto(root+'/routes.html?tsc=6350&route=1');
+ await mp.locator('#route-image-trigger').tap();
+ const stage = await mp.locator('#route-stage').boundingBox();
+ const touch = await mobile.newCDPSession(mp);
+ async function swipeRoute(from, to) {
+  const y = Math.round(stage.y + stage.height / 2);
+  const startX = Math.round(stage.x + stage.width * from);
+  const endX = Math.round(stage.x + stage.width * to);
+  await touch.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:startX,y}]});
+  await touch.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:endX,y}]});
+  await touch.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+ }
+ await swipeRoute(.75,.25);
+ assert.match(await mp.locator('#route-modal-title').innerText(),/маршрут №2/);
+ assert.equal(await mp.locator('#route-fullscreen-dialog').isVisible(),true);
+ await swipeRoute(.25,.75);
+ assert.match(await mp.locator('#route-modal-title').innerText(),/маршрут №1/);
+ await swipeRoute(.25,.75);
+ assert.match(await mp.locator('#route-modal-title').innerText(),/маршрут №1/);
+ await mp.locator('#route-zoom-in').click();
+ assert.equal(await mp.locator('#route-reset').innerText(),'130%');
+ await swipeRoute(.75,.25);
+ assert.match(await mp.locator('#route-modal-title').innerText(),/маршрут №1/);
+ await touch.detach();
  await mobile.close();
  assert.deepEqual(exceptions,[]);
  console.log('PASS: 13 сторінок, навігація, маршрути, теорія, практика, чекліст, профіль, мобільні екрани, браузерні помилки');
