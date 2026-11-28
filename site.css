@@ -282,3 +282,9 @@ html[data-theme=light] .premium-visual{border-color:#d8e6de}
 .intersection-scene:not(:has(#scene-actors[data-position="crossing"])) .crosswalk{display:none}
 #scene-actors[data-position="east-cross"]::after{content:"";position:absolute;left:66%;top:38%;width:12px;height:24%;background:repeating-linear-gradient(0deg,#fff 0 6px,#384751 6px 10px);z-index:3}
 #scene-actors[data-position="east-cross"] .scene-actor{right:auto;left:65%}
+
+.study-shortcuts{margin-top:16px}
+.study-shortcuts h2{margin-top:0}
+.study-shortcuts .actions{display:flex;flex-wrap:wrap;gap:10px}
+.study-shortcuts button{min-height:44px}
+@media(max-width:540px){.study-shortcuts .actions>button{width:100%}}
