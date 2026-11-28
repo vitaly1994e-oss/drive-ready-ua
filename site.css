@@ -294,7 +294,21 @@ html[data-theme=light] .premium-visual{border-color:#d8e6de}
 .route-inline .route-image-stage{max-height:min(72vh,690px)}
 .route-inline .route-modal-header{justify-content:space-between}
 @media print{
- body:has(.route-inline:not(.hidden)) .container>:not(.route-inline){display:none!important}
+ body:has(.route-inline:not(.hidden)) .container>:not(.route-inline,#route-fullscreen-dialog){display:none!important}
  .route-inline:not(.hidden){box-shadow:none;margin:0}
  .route-inline .route-image-stage{max-height:none}
+}
+
+#route-image-trigger{display:block;width:100%;padding:0;border:0;background:none;cursor:zoom-in;text-align:center}
+#route-image-trigger[hidden]{display:none}
+#route-fullscreen-dialog{position:fixed;inset:0;width:100%;max-width:none;height:100%;height:100dvh;max-height:none;margin:0;padding:0;border:0;background:var(--bg);color:var(--ink)}
+#route-fullscreen-dialog .route-inline{height:100%;margin:0;border-radius:0;box-sizing:border-box}
+#route-fullscreen-dialog .route-image-stage{max-height:none;min-height:0}
+#route-fullscreen-dialog #route-image-trigger{cursor:zoom-out}
+#route-fullscreen-dialog .route-inline[data-zoomed="false"] #route-image-trigger{height:100%}
+#route-fullscreen-dialog .route-inline[data-zoomed="false"] #route-modal-image{width:100%!important;height:100%;object-fit:contain}
+@media print{
+ .route-modal-open .container:has(#route-fullscreen-dialog[open]){display:block!important}
+ #route-fullscreen-dialog[open],#route-fullscreen-dialog .route-inline:not(.hidden){position:static;height:auto;max-height:none;overflow:visible}
+ #route-fullscreen-dialog .route-inline[data-zoomed="false"] #route-modal-image{height:auto}
 }
