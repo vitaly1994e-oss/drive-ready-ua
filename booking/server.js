@@ -14,13 +14,18 @@ const pool=new pg.Pool({connectionString:DB_URL,ssl:DB_URL.includes('localhost')
 app.set('trust proxy',1);
 app.disable('x-powered-by');
 app.use((req,res,next)=>{res.set('X-Content-Type-Options','nosniff');res.set('X-Frame-Options','DENY');res.set('Referrer-Policy','strict-origin-when-cross-origin');res.set('Permissions-Policy','camera=(), microphone=(), geolocation=()');res.set('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'");next()});
+app.use('/api',(req,res,next)=>{res.set('Cache-Control','no-store');next()});
 app.use(express.json({limit:'12kb'}));
 const here=path.dirname(fileURLToPath(import.meta.url));
 app.use(express.static(path.join(here,'public'),{extensions:['html'],fallthrough:true,dotfiles:'deny',maxAge:'5m'}));
 const TIME_ZONE='Europe/Kyiv';
 const m=(s)=>{const match=/^([01]\d|2[0-3]):([0-5]\d)$/.exec(String(s||''));return match?Number(match[1])*60+Number(match[2]):null};
 const hhmm=n=>String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');
-const dt=s=>typeof s==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s)&&new Date(s+'T00:00:00Z').toISOString().slice(0,10)===s;
+function dt(value) {
+ if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(value))return false;
+ const date=new Date(value+'T00:00:00Z');
+ return Number.isFinite(date.getTime())&&date.toISOString().slice(0,10)===value;
+}
 const dateAdd=(d,n)=>{const x=new Date(d+'T00:00:00Z');x.setUTCDate(x.getUTCDate()+n);return x.toISOString().slice(0,10)};
 const weekday=d=>{const x=new Date(d+'T00:00:00Z').getUTCDay();return x||7};
 function nowKyiv(){const p=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:TIME_ZONE,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date()).map(x=>[x.type,x.value]));return {date:p.year+'-'+p.month+'-'+p.day,minutes:Number(p.hour)*60+Number(p.minute)}}
@@ -221,6 +226,16 @@ app.put('/api/admin/override',admin,async(req,res)=>{const date=txt(req.body.dat
 app.delete('/api/admin/override',admin,async(req,res)=>{const day=txt(req.body.date,10);if(!dt(day))return errs(res,400,'Невірна дата');try{await pool.query('DELETE FROM booking_overrides WHERE day=$1',[day]);res.json({ok:true})}catch{errs(res,503,'Не вдалося видалити виняток')}});
 app.put('/api/admin/block',admin,async(req,res)=>{const date=txt(req.body.date,10),start=m(req.body.time),blocked=req.body.blocked;if(!dt(date)||start===null||typeof blocked!=='boolean')return errs(res,400,'Невірний час');try{if(blocked){const size=await setting();await pool.query('INSERT INTO booking_blocks(day,start_min,duration_min) VALUES($1,$2,$3) ON CONFLICT DO NOTHING',[date,start,size])}else await pool.query('DELETE FROM booking_blocks WHERE day=$1 AND start_min=$2',[date,start]);res.json({ok:true})}catch{errs(res,503,'Не вдалося змінити слот')}});
 app.post('/api/admin/cancel',admin,async(req,res)=>{const id=String(req.body.id||'');if(!/^\d+$/.test(id))return errs(res,400,'Невірний номер запису');try{const result=await pool.query("UPDATE booking_appointments SET status='cancelled' WHERE id=$1 AND status='confirmed' RETURNING id",[id]);if(!result.rowCount)return errs(res,404,'Активний запис не знайдено');res.json({ok:true})}catch{errs(res,503,'Не вдалося скасувати запис')}});
-app.get('/api/admin/export',admin,async(req,res)=>{try{const result=await pool.query("SELECT to_char(day,'YYYY-MM-DD') as day,start_min,duration_min,student_name,phone,note,code,status FROM booking_appointments ORDER BY day DESC,start_min DESC LIMIT 5000");const escape=s=>'"'+String(s??'').replaceAll('"','""')+'"';const lines=[['Дата','Початок','Кінець','Тривалість, хв','Учень','Телефон','Примітка','Код','Статус'].map(escape).join(',')];for(const r of result.rows)lines.push([r.day,hhmm(r.start_min),hhmm(r.start_min+r.duration_min),r.duration_min,r.student_name,r.phone,r.note,r.code,r.status].map(escape).join(','));res.type('text/csv; charset=utf-8');res.set('Content-Disposition','attachment; filename="drive-bookings.csv"');res.send('\uFEFF'+lines.join('\r\n'))}catch{errs(res,503,'Експорт недоступний')}});
+function csvCell(value) {
+ const cell=String(value??'');
+ const safe=typeof value==='string'&&/^(?:\s*[=+@-]|[\t\r\n])/.test(cell)?"'"+cell:cell;
+ return '"'+safe.replaceAll('"','""')+'"';
+}
+app.get('/api/admin/export',admin,async(req,res)=>{try{const result=await pool.query("SELECT to_char(day,'YYYY-MM-DD') as day,start_min,duration_min,student_name,phone,note,code,status FROM booking_appointments ORDER BY day DESC,start_min DESC LIMIT 5000");const escape=csvCell;const lines=[['Дата','Початок','Кінець','Тривалість, хв','Учень','Телефон','Примітка','Код','Статус'].map(escape).join(',')];for(const r of result.rows)lines.push([r.day,hhmm(r.start_min),hhmm(r.start_min+r.duration_min),r.duration_min,r.student_name,r.phone,r.note,r.code,r.status].map(escape).join(','));res.type('text/csv; charset=utf-8');res.set('Content-Disposition','attachment; filename="drive-bookings.csv"');res.send('\uFEFF'+lines.join('\r\n'))}catch{errs(res,503,'Експорт недоступний')}});
+app.use((err,req,res,next)=>{
+ if(err.type==='entity.parse.failed')return errs(res,400,'Невірний JSON');
+ if(err.type==='entity.too.large')return errs(res,413,'Завеликий запит');
+ next(err);
+});
 app.get('*',(req,res)=>res.status(404).sendFile(path.join(here,'public','index.html')));
 init().then(()=>app.listen(PORT,'0.0.0.0',()=>console.log('Booking portal listening on '+PORT))).catch(e=>{console.error('Database initialization failed',e.message);process.exit(1)});

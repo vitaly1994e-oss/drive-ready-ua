@@ -4,6 +4,8 @@ on:
     branches: [main, upgrade-2026-11-27, audit-fixes-2026-11-27]
   pull_request:
     branches: [main]
+permissions:
+  contents: read
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -13,7 +15,9 @@ jobs:
         with:
           node-version: '22'
       - name: Перевірити сторінки та JavaScript
-        run: python3 tests/validate.py
+        run: |
+          python3 tests/validate.py
+          python3 tests/check_seo.py
   browser:
     runs-on: ubuntu-24.04
     steps:
