@@ -35,6 +35,24 @@ try{
  await admin.goto(url+'/admin.html',{waitUntil:'networkidle'});
  assert.ok((await admin.locator('link[rel=stylesheet][href="/booking-v3.css"]').getAttribute('href')).includes('booking-v3.css'));
  assert.equal(await admin.locator('#admin-login').isVisible(),true);
+ await admin.route('**/api/admin/state',route=>route.fulfill({json:{
+  duration:60,weekly:[],overrides:[],bookings:[
+   {id:'1',day:'2026-11-29',start_min:600,duration_min:60,student_name:'Тестовий учень',phone:'+380000000000',note:'Навчальний запис',status:'confirmed'},
+   {id:'2',day:'2026-11-29',start_min:540,duration_min:60,student_name:'Скасований запис',status:'cancelled'},
+  ],
+ }}));
+ await admin.route('**/api/info',route=>route.fulfill({json:{today:'2026-11-28'}}));
+ await admin.route('**/api/admin/blocks?*',route=>route.fulfill({json:{slots:[]}}));
+ await admin.reload({waitUntil:'domcontentloaded'});
+ await admin.locator('#admin-dashboard').waitFor();
+ assert.equal(await admin.locator('.agenda-lesson').count(),1);
+ assert.match(await admin.locator('.agenda-lesson').innerText(),/10:00–11:00.*Тестовий учень/s);
+ assert.equal(await admin.locator('.agenda-lesson a').getAttribute('href'),'tel:+380000000000');
+ await admin.locator('#agenda-today').click();
+ assert.equal(await admin.locator('#booking-filter-date').inputValue(),'2026-11-28');
+ await admin.locator('#agenda-block').click();
+ assert.equal(await admin.locator('#tab-blocks').isVisible(),true);
+ assert.equal(await admin.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
  await admin.close();
  console.log('Visual UI OK: 390px mobile, 1280px desktop, range selection, promo, shared CSS.');
 }finally{await browser.close()}

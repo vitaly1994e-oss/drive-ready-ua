@@ -10,16 +10,66 @@ const post=(path,body)=>api(path,{method:'POST',headers:{'Content-Type':'applica
 const del=(path,body)=>api(path,{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
 const say=s=>{$('#admin-message').textContent=s};
 const el=(tag,content,klass)=>{const x=document.createElement(tag);if(content!=null)x.textContent=String(content);if(klass)x.className=klass;return x};
-async function sync(){state=await api('/api/admin/state');today=(await api('/api/info')).today;$('#admin-login').classList.add('hidden');$('#admin-dashboard').classList.remove('hidden');renderAll()}
+async function sync(){const [dashboard,info]=await Promise.all([api('/api/admin/state'),api('/api/info')]);state=dashboard;today=info.today;$('#admin-login').classList.add('hidden');$('#admin-dashboard').classList.remove('hidden');renderAll()}
 function renderAll(){
  const active=state.bookings.filter(x=>x.status==='confirmed');
  $('#stats-total').textContent=active.length;
  $('#stats-today').textContent=active.filter(x=>x.day===today).length;
  $('#stats-week').textContent=active.filter(x=>x.day>=today&&x.day<dateAdd(today,7)).length;
- renderBookings();renderWeekly();renderOverrides();renderBlocks();
+ renderAgenda(active);renderBookings();renderWeekly();renderOverrides();
  if(!$('#exception-date').value)$('#exception-date').value=today;
  if(!$('#block-date').value)$('#block-date').value=today;
+ if(selectedTab==='blocks')renderBlocks();
 }
+const agendaDate = new Intl.DateTimeFormat('uk-UA',{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'});
+const kyivTime = new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',hourCycle:'h23',timeZone:'Europe/Kyiv'});
+const readableDate = day => agendaDate.format(new Date(day+'T12:00:00Z'));
+
+function renderAgenda(active){
+ const now = minutes(kyivTime.format(new Date()));
+ const entries = active
+  .filter(booking=>booking.day>today || (booking.day===today && booking.start_min+(booking.duration_min||60)>now))
+  .sort((a,b)=>a.day.localeCompare(b.day)||a.start_min-b.start_min)
+  .slice(0,4);
+ $('#agenda-date').textContent=readableDate(today)+' · час за Києвом';
+ const list=$('#agenda-lessons');
+ list.replaceChildren();
+ $('#agenda-empty').classList.toggle('hidden',entries.length>0);
+ for(const booking of entries){
+  const row=el('li',null,'agenda-lesson');
+  const summary=el('div',null,'agenda-summary');
+  const begins=time(booking.start_min);
+  const ends=time(booking.start_min+(booking.duration_min||60));
+  summary.append(el('span',(booking.day===today?'Сьогодні':readableDate(booking.day))+' · '+begins+'–'+ends,'agenda-time'));
+  summary.append(el('strong',booking.student_name));
+  if(booking.note)summary.append(el('span',booking.note,'agenda-note'));
+  row.append(summary);
+  const phone=String(booking.phone||'').replace(/[^+0-9]/g,'');
+  if(phone){
+   const call=el('a',booking.phone,'secondary-btn');
+   call.href='tel:'+phone;
+   call.setAttribute('aria-label','Зателефонувати: '+booking.student_name);
+   row.append(call);
+  }
+  list.append(row);
+ }
+}
+function jumpTo(tab){
+ selectTab(tab);
+ const panel=$('#tab-'+tab);
+ panel.setAttribute('tabindex','-1');
+ panel.focus();
+}
+$('#agenda-today').onclick=()=>{
+ $('#booking-filter-date').value=today;
+ $('#booking-filter-status').value='confirmed';
+ renderBookings();
+ jumpTo('bookings');
+};
+$('#agenda-block').onclick=()=>{
+ $('#block-date').value=today;
+ jumpTo('blocks');
+};
 function selectTab(name){
  selectedTab=name;document.querySelectorAll('.admin-tabs button').forEach(btn=>{const yes=btn.dataset.tab===name;btn.classList.toggle('active',yes);btn.setAttribute('aria-selected',String(yes))});
  for(const t of ['bookings','weekly','exceptions','blocks'])$('#tab-'+t).classList.toggle('hidden',name!==t);
