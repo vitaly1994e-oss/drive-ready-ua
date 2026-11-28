@@ -1,0 +1,54 @@
+name: Mobile app build
+on:
+  pull_request:
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/mobile-build.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: mobile
+
+jobs:
+  bundles:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - run: npm ci
+      - run: npx expo install --check
+      - run: npm run build:check
+  android-preview:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      NODE_ENV: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - run: npm ci
+      - run: npx expo prebuild --platform android --no-install
+      - run: ./gradlew :app:assembleRelease --no-daemon
+        working-directory: mobile/android
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-preview-apk
+          path: mobile/android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
