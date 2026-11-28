@@ -201,6 +201,7 @@ try {
   await mp.goto(root+'/ads.html');
  assert.equal(await mp.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1),true,'Horizontal overflow ads');
  assert.equal(await mp.locator('.ads-price-card').count(),3);
+ await mp.route('**/6350__*.png', route => route.fulfill({path:'favicon.svg',contentType:'image/svg+xml'}));
  await mp.goto(root+'/routes.html?tsc=6350&route=1');
  await mp.locator('#route-image-trigger').tap();
  const stage = await mp.locator('#route-stage').boundingBox();
