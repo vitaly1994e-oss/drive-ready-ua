@@ -103,9 +103,9 @@ try {
  assert.match(await page.locator('#result-description').innerText(),/Іспит завершено|Час вичерпано|Допущено третю/);
  await page.goto(root+'/quiz.html');
  await page.locator('#start:enabled').waitFor();
- await page.locator('#mode').selectOption('diagnostic');
- await page.locator('#start').click();
+ await page.locator('#study-diagnostic').click();
  assert.equal(await page.locator('#question-number').innerText(),'1 / 10');
+ assert.equal(await page.locator('#study-diagnostic').isDisabled(),true);
  await page.locator('#stop').click();
  await page.goto(root+'/quiz-training.html');
  await page.locator('#begin').click();
