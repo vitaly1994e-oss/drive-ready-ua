@@ -58,9 +58,10 @@ try {
  await page.keyboard.press('Escape');
  assert.equal(await page.locator('#route-modal').isVisible(),false);
  await page.locator('#search').fill('8041');
- await page.locator('.route-card button').click();
- assert.match(await page.locator('#detail').innerText(),/8 вересня 2026/);
- assert.equal(await page.locator('#detail .route-open').count(),0);
+ await page.locator('.route-open').click();
+ assert.equal(await page.locator('#route-chooser option').count(),5);
+ assert.match(await page.locator('#route-modal-image').getAttribute('src'),/2026\/09\/8041__1\.jpg$/);
+ await page.keyboard.press('Escape');
  await page.locator('#search').fill('6342');
  assert.equal(await page.locator('.route-open').count(),1);
  await page.locator('#search').fill('6348');
@@ -92,6 +93,11 @@ try {
  await page.locator('#route-chooser').selectOption('9');
  assert.match(await page.locator('#route-modal-image').getAttribute('src'),/hsc\.gov\.ua.*6350__10\.png$/);
  assert.match(await page.locator('#route-original').getAttribute('href'),/tsts-mvs-6350\/$/);
+ await page.goto(root+'/routes.html?tsc=3541');
+ assert.equal(await page.locator('#route-modal').isVisible(),true);
+ assert.equal(await page.locator('#route-chooser option').count(),23);
+ assert.match(await page.locator('#route-modal-image').getAttribute('src'),/3541___1\.jpg$/);
+
  await page.goto(root+'/quiz.html');
  await page.waitForFunction(()=>{const b=document.querySelector('#start');return b&&!b.disabled},{timeout:45000});
  assert.match(await page.locator('#bank-count').innerText(),/питань для цієї категорії/);
