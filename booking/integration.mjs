@@ -84,3 +84,17 @@ test('Students see their scheduled lessons using phone alone; no codes or names 
  }
  const after=await req('/api/my-lessons',json('POST',{phone}));assert.equal(after.status,200);assert.equal(after.body.lessons.length,0);
 });
+
+test('Invalid dates and malformed JSON return client errors without caching', async () => {
+ const invalidDate = await req('/api/slots?date=2026-99-99');
+ assert.equal(invalidDate.status, 400);
+ assert.equal(invalidDate.headers.get('cache-control'), 'no-store');
+ const malformed = await req('/api/book', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json'},
+  body: '{',
+ });
+ assert.equal(malformed.status, 400);
+ assert.equal(malformed.headers.get('cache-control'), 'no-store');
+ assert.deepEqual(malformed.body, {error: 'Невірний JSON'});
+});

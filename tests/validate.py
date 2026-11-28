@@ -1,8 +1,9 @@
 from pathlib import Path
 from html.parser import HTMLParser
 import subprocess, tempfile
+from urllib.parse import unquote, urlsplit
 root=Path(__file__).resolve().parents[1]
-pages=list(root.glob("*.html"))
+pages = sorted(root.glob("*.html")) + sorted((root / "regions").glob("*.html"))
 assert len(pages)>=9, f"Недостатньо сторінок: {len(pages)}"
 class Inspect(HTMLParser):
     def __init__(self):
@@ -23,7 +24,9 @@ for page in pages:
     ins=Inspect();ins.feed(page.read_text(encoding="utf-8"))
     assert ins.lang, f"{page.name}: lang uk не задано"
     for link in ins.links:
-        assert (root/link).exists(), f"{page.name}: відсутній {link}"
+        target = unquote(urlsplit(link).path)
+        resolved = root / target.lstrip("/") if target.startswith("/") else page.parent / target
+        assert resolved.exists(), f"{page.relative_to(root)}: відсутній {link}"
     for script in ins.scripts:
         if script.strip():
             with tempfile.NamedTemporaryFile(mode="w",suffix=".js",encoding="utf-8") as f:

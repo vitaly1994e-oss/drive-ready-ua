@@ -44,7 +44,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: npm install --no-audit --no-fund
+      - run: npm ci --no-audit --no-fund
       - run: node --check server.js && node --check public/app.js && node --check public/admin.js
       - run: npm test
       - name: Start server and test booking transaction
